@@ -1,85 +1,103 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Encargado – Crear Horario</title>
-  <!-- Bootstrap y KaiAdmin CSS -->
-  <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
-  <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-  <style>
-    .form-row {
-      gap: 0.5rem;
-    }
-  </style>
-  <link rel="icon" href="../../../assets/img/logoGHAEM.png" type="image/x-icon"/>
-  <!-- CSS Just for demo purpose, don't include it in your project -->
-<link rel="stylesheet" href="assets/css/demo.css" />
-</head>
-<body>
-<div class="wrapper">
-<div class="main-panel">
-  <div id="header-placeholder"></div>
-  <div id="sidebar-placeholder"></div>
-     
-    <div class="container">
-      <div class="page-inner">
-        <div class="card mt-3">
-          <div class="card-header">
-            <h4>Creación de nuevo horario (18‑24 may.)</h4>
-          </div>
-          <div class="card-body">
-            <form>
-              <div class="form-group mb-4">
-                <label>Horario de la semana para:</label>
-                <select class="form-control" id="empleado">
-                  <option>Danna Gomez</option>
-                  <option>Cecilia</option>
-                  <option>Dexsi</option>
-                </select>
-              </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Encargado – Crear Horario</title>
+    <!-- Bootstrap y KaiAdmin CSS -->
+    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <style>
+      .form-row {
+        gap: 0.5rem;
+      }
+    </style>
+    <link
+      rel="icon"
+      href="../../../assets/img/logoGHAEM.png"
+      type="image/x-icon"
+    />
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link rel="stylesheet" href="assets/css/demo.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="main-panel">
+        <div id="header-placeholder"></div>
+        <div id="sidebar-placeholder"></div>
 
-              <label>Seleccionar los días y horas</label>
-              <div id="dias-container">
-                <!-- Días de la semana -->
+        <div class="container">
+          <div class="page-inner">
+            <div class="card mt-3">
+              <div class="card-header">
+                <h4>Creación de nuevo horario (18‑24 may.)</h4>
               </div>
+              <div class="card-body">
+                <form>
+                  <div class="form-group mb-4">
+                    <label>Horario de la semana para:</label>
+                    <select class="form-control" id="empleado">
+                      <option>Danna Gomez</option>
+                      <option>Cecilia</option>
+                      <option>Dexsi</option>
+                    </select>
+                  </div>
 
-              <div class="form-group mt-4">
-                <button type="submit" class="btn btn-primary">Guardar horario</button>
-                <button type="reset" class="btn btn-secondary">Limpiar</button>
+                  <label>Seleccionar los días y horas</label>
+                  <div id="dias-container">
+                    <!-- Días de la semana -->
+                  </div>
+
+                  <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                      Guardar horario
+                    </button>
+                    <button type="reset" class="btn btn-secondary">
+                      Limpiar
+                    </button>
+                  </div>
+                </form>
               </div>
-            </form>
+            </div>
           </div>
         </div>
-
       </div>
     </div>
-  </div>
-</div>
 
-  <!-- Scripts KaiAdmin -->
-  <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
-  <script src="../../../assets/js/core/popper.min.js"></script>
-  <script src="../../../assets/js/core/bootstrap.min.js"></script>
-  <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
-  <script src="../../../assets/js/kaiadmin.min.js"></script>
+    <!-- Scripts KaiAdmin -->
+    <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
+    <script src="../../../assets/js/core/popper.min.js"></script>
+    <script src="../../../assets/js/core/bootstrap.min.js"></script>
+    <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../../../assets/js/kaiadmin.min.js"></script>
 
-  <script>
-    const dias = [
-      "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"
-    ];
+    <script>
+      const dias = [
+        "Lunes",
+        "Martes",
+        "Miércoles",
+        "Jueves",
+        "Viernes",
+        "Sábado",
+        "Domingo",
+      ];
 
-    const container = document.getElementById('dias-container');
+      const container = document.getElementById("dias-container");
 
-    dias.forEach((dia, i) => {
-      const lower = dia.toLowerCase();
-      container.innerHTML += `
+      dias.forEach((dia, i) => {
+        const lower = dia.toLowerCase();
+        container.innerHTML += `
        <div class="row mb-3 align-items-center">
             <div class="col-md-3">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="${lower}" ${i === 0 ? 'checked' : ''}>
+                <input class="form-check-input" type="checkbox" id="${lower}" ${
+          i === 0 ? "checked" : ""
+        }>
                 <label class="form-check-label" for="${lower}">${dia}</label>
               </div>
             </div>
@@ -107,37 +125,37 @@
           </div>
         </div>
       `;
-    });
-
-    // Lógica para mostrar selector de sucursal solo si es multisucursal
-    const empleadoSelect = document.getElementById("empleado");
-
-    const isMultiSucursal = (empleado) => {
-      return empleado === "Danna Gomez"; 
-    };
-
-    empleadoSelect.addEventListener("change", () => {
-      const esMulti = isMultiSucursal(empleadoSelect.value);
-      document.querySelectorAll(".sucursal-select").forEach(sel => {
-        sel.disabled = !esMulti;
-      });
-    });
-
-    // Inicializar estado del selector
-    empleadoSelect.dispatchEvent(new Event("change"));
-  </script>
-  <script>
-    fetch('../componentes/header.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('header-placeholder').innerHTML = data;
       });
 
-    fetch('../componentes/sidebar.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('sidebar-placeholder').innerHTML = data;
+      // Lógica para mostrar selector de sucursal solo si es multisucursal
+      const empleadoSelect = document.getElementById("empleado");
+
+      const isMultiSucursal = (empleado) => {
+        return empleado === "Danna Gomez";
+      };
+
+      empleadoSelect.addEventListener("change", () => {
+        const esMulti = isMultiSucursal(empleadoSelect.value);
+        document.querySelectorAll(".sucursal-select").forEach((sel) => {
+          sel.disabled = !esMulti;
+        });
       });
-  </script>
-</body>
+
+      // Inicializar estado del selector
+      empleadoSelect.dispatchEvent(new Event("change"));
+    </script>
+    <script>
+      fetch("../componentes/header.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("header-placeholder").innerHTML = data;
+        });
+
+      fetch("../componentes/sidebar.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("sidebar-placeholder").innerHTML = data;
+        });
+    </script>
+  </body>
 </html>
