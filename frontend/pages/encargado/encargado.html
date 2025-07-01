@@ -23,20 +23,6 @@
 <div class="main-panel">
   <div id="header-placeholder"></div>
   <div id="sidebar-placeholder"></div>
-
-  <script>
-    fetch('../componentes/header.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('header-placeholder').innerHTML = data;
-      });
-
-    fetch('../componentes/sidebar.html')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('sidebar-placeholder').innerHTML = data;
-      });
-  </script>
      
     <div class="container">
       <div class="page-inner">
@@ -138,6 +124,19 @@
 
     // Inicializar estado del selector
     empleadoSelect.dispatchEvent(new Event("change"));
+  </script>
+  <script>
+    fetch('../componentes/header.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('header-placeholder').innerHTML = data;
+      });
+
+    fetch('../componentes/sidebar.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('sidebar-placeholder').innerHTML = data;
+      });
   </script>
 </body>
 </html>
