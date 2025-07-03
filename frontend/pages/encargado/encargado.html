@@ -144,17 +144,52 @@
       // Inicializar estado del selector
       empleadoSelect.dispatchEvent(new Event("change"));
     </script>
+   
+    <!-- Cargar componentes y activar hamburguesa -->
     <script>
+      // Header
       fetch("../componentes/header.html")
         .then((res) => res.text())
         .then((data) => {
           document.getElementById("header-placeholder").innerHTML = data;
         });
 
+      // Sidebar y activar botones
+
       fetch("../componentes/sidebar.html")
         .then((res) => res.text())
         .then((data) => {
           document.getElementById("sidebar-placeholder").innerHTML = data;
+
+          setTimeout(() => {
+            // --- Toggle hamburguesa ---
+            document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                document.body.classList.toggle("sidebar_minimize");
+              });
+            });
+            // --- Cerrar menú en móvil ---
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              link.addEventListener("click", () => {
+                if (window.innerWidth < 992) {
+                  document.body.classList.remove("sidebar_minimize");
+                }
+              });
+            });
+            // --- Marcar opción activa ---
+            document.querySelectorAll(".nav-item").forEach((item) => {
+              item.classList.remove("active");
+            });
+            const path = window.location.pathname.split("/").pop(); // nombre del archivo actual
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              if (
+                link.getAttribute("href") &&
+                link.getAttribute("href").includes(path)
+              ) {
+                link.parentElement.classList.add("active");
+              }
+            });
+          }, 100);
         });
     </script>
   </body>
