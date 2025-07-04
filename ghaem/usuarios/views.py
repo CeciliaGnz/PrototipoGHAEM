@@ -1,50 +1,32 @@
-from django.shortcuts import render
-
-# Create your views here.
-from rest_framework import generics, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status, permissions
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Usuario
-from .serializers import UsuarioSerializer
-from rest_framework.permissions import IsAuthenticated
 
-# Registro de usuario (solo para pruebas, puedes eliminarlo en producción)
-class RegistroUsuarioView(generics.CreateAPIView):
-    queryset = Usuario.objects.all()
-    serializer_class = UsuarioSerializer
+from .models import User
+from .serializers import UserSerializer, RegisterSerializer
 
-    def post(self, request, *args, **kwargs):
-        username = request.data.get('username')
+class LoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        cedula = request.data.get('cedula')
         password = request.data.get('password')
-        rol = request.data.get('rol')
-        if Usuario.objects.filter(username=username).exists():
-            return Response({'error': 'El usuario ya existe'}, status=400)
-        usuario = Usuario.objects.create_user(username=username, password=password, rol=rol)
-        return Response(UsuarioSerializer(usuario).data)
-
-# Login
-class LoginView(generics.GenericAPIView):
-    serializer_class = UsuarioSerializer
-
-    def post(self, request, *args, **kwargs):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        usuario = authenticate(username=username, password=password)
-        if usuario:
-            refresh = RefreshToken.for_user(usuario)
+        user = authenticate(request, cedula=cedula, password=password)
+        if user is not None:
+            refresh = RefreshToken.for_user(user)
+            user_data = UserSerializer(user).data
             return Response({
-                'refresh': str(refresh),
                 'access': str(refresh.access_token),
-                'user': UsuarioSerializer(usuario).data,
+                'refresh': str(refresh),
+                'user': user_data
             })
-        return Response({'error': 'Credenciales inválidas'}, status=401)
-
-# Vista protegida de ejemplo
-from rest_framework.views import APIView
+        return Response({'error': 'Credenciales inválidas'}, status=400)
 
 class PerfilView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        return Response(UsuarioSerializer(request.user).data)
+        user = request.user
+        return Response(UserSerializer(user).data)
