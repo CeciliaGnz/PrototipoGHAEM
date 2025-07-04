@@ -1,368 +1,178 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Kaiadmin - Bootstrap 5 Admin Dashboard</title>
-    <meta
-      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-      name="viewport"
-    />
-    <link
-      rel="icon"
-      href="assets/img/logoGHAEM.png"
-      type="image/x-icon"
-    />
-
-    <!-- Fonts and icons -->
-    <script src="assets/js/plugin/webfont/webfont.min.js"></script>
-    <script>
-      WebFont.load({
-        google: { families: ["Public Sans:300,400,500,600,700"] },
-        custom: {
-          families: [
-            "Font Awesome 5 Solid",
-            "Font Awesome 5 Regular",
-            "Font Awesome 5 Brands",
-            "simple-line-icons",
-          ],
-          urls: ["assets/css/fonts.min.css"],
-        },
-        active: function () {
-          sessionStorage.fonts = true;
-        },
-      });
-    </script>
-
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="assets/css/plugins.min.css" />
-    <link rel="stylesheet" href="assets/css/kaiadmin.min.css" />
-
-    <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link rel="stylesheet" href="assets/css/demo.css" />
-  </head>
-  <body>
-    <div class="wrapper">
-      <!-- Sidebar -->
-      <div class="sidebar" data-background-color="dark">
-        <div class="sidebar-logo">
-          <!-- Logo Header -->
-          <div class="logo-header" data-background-color="dark">
-            <a href="index.html" class="logo">
-              <img
-                src="assets/img/pngGHAEM.png"
-                alt="navbar brand"
-                class="navbar-brand"
-                height="40"
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inicio de sesión | GHAEM</title>
+  <!-- KaiAdmin Styles -->
+  <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
+  <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <link rel="stylesheet" href="frontend/css/login.css" /> 
+</head>
+<body>
+  <div class="container-fluid login-wrapper">
+    <div class="login-container">
+      <div class="login-left d-flex align-items-center justify-content-center">
+        <i class="fa-solid fa-building fa-5x text-white opacity-75"></i>
+      </div>
+      <div class="login-right">
+        <div class="mb-2 text-muted fw-bold" style="font-size:1.2rem;">Inicio de sesión</div>
+        <span class="login-title">GHAEM</span>
+        <div class="login-subtitle mb-0">Bienvenido/a <span style="font-size:1.3rem;">👋</span></div>
+        <div class="mb-3 text-secondary">Ingresa tus credenciales de empleado asignadas</div>
+        <form id="loginForm" autocomplete="off" novalidate>
+          <div id="loginError" style="display:none;" class="alert alert-danger"></div>
+          <div class="mb-3">
+            <label class="form-label">Registrar asistencia</label>
+            <div class="row g-2 mb-2">
+              <div class="col">
+                <input type="text" class="form-control" value="" id="fechaActual" disabled>
+              </div>
+              <div class="col">
+                <input type="text" class="form-control" value="" id="horaActual" disabled>
+              </div>
+              <div class="col">
+                <input type="text" class="form-control" value="Hora de entrada" disabled>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">N. de identificación</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                id="userId"
+                placeholder="0-0000-0000"
+                required
+                maxlength="12"
               />
-            </a>
-            <div class="nav-toggle">
-              <button class="btn btn-toggle toggle-sidebar">
-                <i class="gg-menu-right"></i>
-              </button>
-              <button class="btn btn-toggle sidenav-toggler">
-                <i class="gg-menu-left"></i>
-              </button>
+              <div class="invalid-feedback">Ingrese su identificación.</div>
             </div>
-            <button class="topbar-toggler more">
-              <i class="gg-more-vertical-alt"></i>
-            </button>
           </div>
-          <!-- End Logo Header -->
-        </div>
-        <div class="sidebar-wrapper scrollbar scrollbar-inner">
-          <div class="sidebar-content">
-            <ul class="nav nav-secondary">
-              <li class="nav-item active">
-                <a
-                  data-bs-toggle="collapse"
-                  href="#dashboard"
-                  class="collapsed"
-                  aria-expanded="false"
-                >
-                  <i class="fas fa-home"></i>
-                  <p>Dashboard</p>
-                </a>
-              </li>
-
-              <li class="nav-item">
-                <a
-                  data-bs-toggle="collapse"
-                  href="#dashboard"
-                  class="collapsed"
-                  aria-expanded="false"
-                >
-                  <i class="fas fa-home"></i>
-                  <p>Equipo</p>
-                </a>
-              </li>
-
-              <li class="nav-item">
-                <a
-                  data-bs-toggle="collapse"
-                  href="/frontend/pages/encargado/encargado.html"
-                  class="collapsed"
-                  aria-expanded="false"
-                >
-                  <i class="fas fa-home"></i>
-                  <p>Horario</p>
-                </a>
-              </li>
-
-              <li class="nav-item">
-                <a
-                  data-bs-toggle="collapse"
-                  href="#dashboard"
-                  class="collapsed"
-                  aria-expanded="false"
-                >
-                  <i class="fas fa-home"></i>
-                  <p>Solicitudes</p>
-                </a>
-              </li>
-              
-            </ul>
+          <div class="mb-4">
+            <label class="form-label">Contraseña</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+              <input
+                type="password"
+                class="form-control"
+                id="userPassword"
+                required
+              />
+              <span class="input-group-text" style="cursor:pointer;" onclick="togglePassword()">
+                <i class="fa-regular fa-eye" id="eyeIcon"></i>
+              </span>
+              <div class="invalid-feedback">Ingrese su contraseña.</div>
+            </div>
           </div>
-        </div>
+          <button type="submit" class="btn btn-primary w-100 fw-bold" style="height:48px;font-size:1.1rem;">Ingresar</button>
+        </form>
       </div>
-      <!-- End Sidebar -->
-
-      <div class="main-panel">
-        <div class="main-header">
-          <div class="main-header-logo">
-            <!-- Logo Header -->
-            <div class="logo-header" data-background-color="dark">
-              <a href="index.html" class="logo">
-                <img
-                  src="assets/img/kaiadmin/logo_light.svg"
-                  alt="navbar brand"
-                  class="navbar-brand"
-                  height="20"
-                />
-              </a>
-              <div class="nav-toggle">
-                <button class="btn btn-toggle toggle-sidebar">
-                  <i class="gg-menu-right"></i>
-                </button>
-                <button class="btn btn-toggle sidenav-toggler">
-                  <i class="gg-menu-left"></i>
-                </button>
-              </div>
-              <button class="topbar-toggler more">
-                <i class="gg-more-vertical-alt"></i>
-              </button>
-            </div>
-            <!-- End Logo Header -->
-          </div>
-
-          
-          <!-- Navbar Header -->
-          <nav
-            class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"
-          >
-            <div class="container-fluid d-flex justify-content-between align-items-center">
-              <div class="py-4">
-                <h3 class="fw-bold mb-1">Bienvenid@ <span>Dexsi</span></h3>
-                <h6 class="op-7 mb-0">Gerente de tienda</h6>
-              </div>
-
-              <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
-                
-
-                <li class="nav-item topbar-user dropdown hidden-caret">
-                  <a
-                    class="dropdown-toggle profile-pic"
-                    data-bs-toggle="dropdown"
-                    href="#"
-                    aria-expanded="false"
-                  >
-                    
-                    <span class="profile-username">
-                      <span class="op-7">Cerrar sesión</span>
-                    </span>
-                  </a>
-                 
-                </li>
-              </ul>
-            </div>
-          </nav>
-          <!-- End Navbar -->
-        </div>
-
-        <div class="container">
-          <div class="page-inner p-5">
-            <div
-              class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
-            >
-              
-              <div class="ms-md-auto py-2 py-md-0">
-                <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
-                <a href="#" class="btn btn-primary btn-round">Add Customer</a>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
-                  <div class="card-body">
-                    <div class="row align-items-center">
-                      <div class="col-icon">
-                        <div
-                          class="icon-big text-center icon-primary bubble-shadow-small"
-                        >
-                          <i class="fas fa-users"></i>
-                        </div>
-                      </div>
-                      <div class="col col-stats ms-3 ms-sm-0">
-                        <div class="numbers">
-                          <p class="card-category">Visitors</p>
-                          <h4 class="card-title">1,294</h4>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
-                  <div class="card-body">
-                    <div class="row align-items-center">
-                      <div class="col-icon">
-                        <div
-                          class="icon-big text-center icon-info bubble-shadow-small"
-                        >
-                          <i class="fas fa-user-check"></i>
-                        </div>
-                      </div>
-                      <div class="col col-stats ms-3 ms-sm-0">
-                        <div class="numbers">
-                          <p class="card-category">Subscribers</p>
-                          <h4 class="card-title">1303</h4>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
-                  <div class="card-body">
-                    <div class="row align-items-center">
-                      <div class="col-icon">
-                        <div
-                          class="icon-big text-center icon-success bubble-shadow-small"
-                        >
-                          <i class="fas fa-luggage-cart"></i>
-                        </div>
-                      </div>
-                      <div class="col col-stats ms-3 ms-sm-0">
-                        <div class="numbers">
-                          <p class="card-category">Sales</p>
-                          <h4 class="card-title">$ 1,345</h4>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-md-3">
-                <div class="card card-stats card-round">
-                  <div class="card-body">
-                    <div class="row align-items-center">
-                      <div class="col-icon">
-                        <div
-                          class="icon-big text-center icon-secondary bubble-shadow-small"
-                        >
-                          <i class="far fa-check-circle"></i>
-                        </div>
-                      </div>
-                      <div class="col col-stats ms-3 ms-sm-0">
-                        <div class="numbers">
-                          <p class="card-category">Order</p>
-                          <h4 class="card-title">576</h4>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-           
-          </div>
-        </div>
-
-        <footer class="footer">
-          <div class="container-fluid d-flex justify-content-between">
-            <div class="copyright">
-              2025, GHAEM </i> 
-            </div>
-          </div>
-        </footer>
-      </div>
-
     </div>
-    <!--   Core JS Files   -->
-    <script src="assets/js/core/jquery-3.7.1.min.js"></script>
-    <script src="assets/js/core/popper.min.js"></script>
-    <script src="assets/js/core/bootstrap.min.js"></script>
+  </div>
+  <!-- KaiAdmin JS -->
+  <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
+  <script src="../../../assets/js/core/popper.min.js"></script>
+  <script src="../../../assets/js/core/bootstrap.min.js"></script>
+  <script src="../../../assets/js/kaiadmin.min.js"></script>
+  <script>
+    // Mostrar/ocultar contraseña
+    function togglePassword() {
+      const input = document.getElementById("userPassword");
+      const icon = document.getElementById("eyeIcon");
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      }
+    }
 
-    <!-- jQuery Scrollbar -->
-    <script src="assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    // Cargar fecha/hora actual en inputs de asistencia
+    function pad(num) { return num < 10 ? "0" + num : num; }
+    function actualizarFechaHora() {
+      const now = new Date();
+      // Fecha formato: "Jun 10, 2024"
+      const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+      document.getElementById("fechaActual").value =
+        meses[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
+      // Hora formato: "9:41 AM"
+      let horas = now.getHours();
+      const minutos = pad(now.getMinutes());
+      const ampm = horas >= 12 ? "PM" : "AM";
+      horas = horas % 12;
+      horas = horas ? horas : 12;
+      document.getElementById("horaActual").value = horas + ":" + minutos + " " + ampm;
+    }
+    actualizarFechaHora();
 
-    <!-- Chart JS -->
-    <script src="assets/js/plugin/chart.js/chart.min.js"></script>
+    // Validación + envío al backend con fetch
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      let valido = true;
+      const userId = document.getElementById('userId');
+      const password = document.getElementById('userPassword');
+      const loginError = document.getElementById('loginError');
+      loginError.style.display = "none";
 
-    <!-- jQuery Sparkline -->
-    <script src="assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+      // Validación simple
+      if (!userId.value.trim()) {
+        userId.classList.add('is-invalid');
+        valido = false;
+      } else {
+        userId.classList.remove('is-invalid');
+      }
+      if (!password.value.trim()) {
+        password.classList.add('is-invalid');
+        valido = false;
+      } else {
+        password.classList.remove('is-invalid');
+      }
+      if (!valido) return;
 
-    <!-- Chart Circle -->
-    <script src="assets/js/plugin/chart-circle/circles.min.js"></script>
+      // Enviar a backend (ajustar la URL)
+      try {
+        const response = await fetch('/api/usuarios/login/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: userId.value.trim(),
+            password: password.value
+          })
+        });
+        const data = await response.json();
+        if (response.ok && data.access) {
+          // Guarda el token (puedes usar localStorage/cookies según tu preferencia)
+          localStorage.setItem('token', data.access);
 
-    <!-- Datatables -->
-    <script src="assets/js/plugin/datatables/datatables.min.js"></script>
-
-    <!-- Bootstrap Notify -->
-    <script src="assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
-
-    <!-- jQuery Vector Maps -->
-    <script src="assets/js/plugin/jsvectormap/jsvectormap.min.js"></script>
-    <script src="assets/js/plugin/jsvectormap/world.js"></script>
-
-    <!-- Sweet Alert -->
-    <script src="assets/js/plugin/sweetalert/sweetalert.min.js"></script>
-
-    <!-- Kaiadmin JS -->
-    <script src="assets/js/kaiadmin.min.js"></script>
-
-    <!-- Kaiadmin DEMO methods, don't include it in your project! -->
-    <script src="assets/js/setting-demo.js"></script>
-    <script src="assets/js/demo.js"></script>
-    <script>
-      $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
-        type: "line",
-        height: "70",
-        width: "100%",
-        lineWidth: "2",
-        lineColor: "#177dff",
-        fillColor: "rgba(23, 125, 255, 0.14)",
-      });
-
-      $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
-        type: "line",
-        height: "70",
-        width: "100%",
-        lineWidth: "2",
-        lineColor: "#f3545d",
-        fillColor: "rgba(243, 84, 93, .14)",
-      });
-
-      $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
-        type: "line",
-        height: "70",
-        width: "100%",
-        lineWidth: "2",
-        lineColor: "#ffa534",
-        fillColor: "rgba(255, 165, 52, .14)",
-      });
-    </script>
-  </body>
+          // Redirige según el rol devuelto
+          if (data.user && data.user.rol) {
+            if (data.user.rol === "gerente") {
+              window.location.href = "/frontend/pages/gerente/dashboard.html";
+            } else if (data.user.rol === "encargado") {
+              window.location.href = "/frontend/pages/encargado/dashboard.html";
+            } else {
+              window.location.href = "/frontend/pages/empleado/dashboard.html";
+            }
+          } else {
+            window.location.href = "/frontend/pages/dashboard.html";
+          }
+        } else {
+          loginError.style.display = "block";
+          loginError.innerText = data.error || "Credenciales inválidas";
+        }
+      } catch (e) {
+        loginError.style.display = "block";
+        loginError.innerText = "Error de conexión.";
+      }
+    });
+  </script>
+</body>
 </html>
