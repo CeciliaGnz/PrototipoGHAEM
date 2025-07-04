@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Encargado/Vendedor - Solicitar</title>
+    <!-- Estilos KaiAdmin -->
+    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
+     <link rel="icon" href="../../../assets/img/InicialLogo.png" type="image/x-icon">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+  </head>
+
+  <body class="sidebar-mini">
+    <div class="wrapper">
+      <div class="main-panel">
+        <!--Componentes de header y sidebar-->
+        <div id="header-placeholder"></div>
+        <div id="sidebar-placeholder"></div>
+
+        <div class="container">
+          <div class="page-inner">
+            <div class="card mt-4">
+              <div class="card-header">
+                <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-2">
+              <div>
+                <h4>Mostrando un total de <span>2</span> empleados</h4>
+              </div>
+              <div class="ms-md-auto py-2 py-md-0">
+               <a href="#" class="btn btn-primary btn-round" data-bs-toggle="modal" data-bs-target="#modalAgregarEmpleado">
+                    <i class="fas fa-plus me-1"></i>
+                    Agregar empleado
+                </a>
+                </div>
+            </div>
+              </div>
+              <div class="card-body">
+
+                <div class="row row-demo-grid">
+                <!--Empleado 1-->
+                <div class="col-xl-4">
+                    <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold mb-1">Cecilia González</h5>
+                        <p class="mb-1 text-muted">Rol: Vendedora</p>
+                        <p class="mb-3 text-muted">Sucursal A</p>
+
+                        <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Ver asistencia">
+                            <i class="fas fa-calendar-check"></i>
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditarEmpleado" title="Editar empleado">
+                        <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" title="Eliminar empleado">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- Empleado 2 -->
+                <div class="col-xl-4">
+                    <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold mb-1">Empleado 2</h5>
+                        <p class="mb-1 text-muted">Rol: Vendedora</p>
+                        <p class="mb-3 text-muted">Sucursal A</p>
+
+                        <div class="d-flex justify-content-center gap-2">
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Ver asistencia">
+                            <i class="fas fa-calendar-check"></i>
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditarEmpleado" title="Editar empleado">
+                        <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" title="Eliminar empleado">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para agregar empleado -->
+    <div class="modal fade" id="modalAgregarEmpleado" tabindex="-1" aria-labelledby="modalAgregarEmpleadoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content no-padding-modal">
+        <div class="card m-0">
+            <!-- Encabezado -->
+            <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title m-0">Agregar nuevo empleado</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Cuerpo del modal -->
+            <div class="card-body">
+            <form id="formNuevoEmpleado">
+                <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label for="nombreApellido">Nombre y apellido</label>
+                    <input type="text" class="form-control" id="nombreApellido" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label for="identificacion">Identificación</label>
+                    <input type="text" class="form-control" id="identificacion" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label for="password">Contraseña inicial</label>
+                    <input type="password" class="form-control" id="password" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label for="rol">Rol a desempeñar</label>
+                    <select class="form-select" id="rol" required>
+                        <option value="" disabled selected>Seleccione un rol</option>
+                        <option value="encargado">Encargado</option>
+                        <option value="vendedor">Vendedor</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                    <label for="sucursal">Sucursal asignada</label>
+                    <select class="form-select" id="sucursal" required>
+                        <option value="" disabled selected>Seleccione una sucursal</option>
+                        <option value="sucursal_a">Sucursal A</option>
+                        <option value="sucursal_b">Sucursal B</option>
+                        <option value="multisucursal">Multisucursal</option>
+                    </select>
+                    </div>
+                </div>
+                </div>
+            </form>
+            </div>
+
+            <!-- Footer del modal -->
+            <div class="card-action d-flex justify-content-end px-4 pb-4">
+            <button type="submit" form="formNuevoEmpleado" class="btn btn-success me-2">Agregar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+    <!-- Fin Modal para agregar empleado -->
+
+
+    <!-- Modal para editar empleado -->
+    <div class="modal fade" id="modalEditarEmpleado" tabindex="-1" aria-labelledby="modalEditarEmpleadoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content no-padding-modal">
+        <div class="card m-0">
+            <!-- Encabezado -->
+            <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title m-0">Editar empleado</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Cuerpo del modal -->
+            <div class="card-body">
+            <form id="formEditarEmpleado">
+                <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label for="editNombreApellido">Nombre y apellido</label>
+                    <input type="text" class="form-control" id="editNombreApellido" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label for="editIdentificacion">Identificación</label>
+                    <input type="text" class="form-control" id="editIdentificacion" disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label for="editRol">Rol a desempeñar</label>
+                    <select class="form-select" id="editRol" required>
+                        <option value="" disabled selected>Seleccione un rol</option>
+                        <option value="encargado">Encargado</option>
+                        <option value="vendedor">Vendedor</option>
+                    </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                    <label for="editSucursal">Sucursal asignada</label>
+                    <select class="form-select" id="editSucursal" required>
+                        <option value="" disabled selected>Seleccione una sucursal</option>
+                        <option value="sucursal_a">Sucursal A</option>
+                        <option value="sucursal_b">Sucursal B</option>
+                        <option value="multisucursal">Multisucursal</option>
+                    </select>
+                    </div>
+                </div>
+                </div>
+            </form>
+            </div>
+
+            <!-- Footer del modal -->
+            <div class="card-action d-flex justify-content-end px-4 pb-4">
+            <button type="submit" form="formEditarEmpleado" class="btn btn-warning me-2">Actualizar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+    <!-- FIn Modal para editar empleado -->
+
+
+
+
+    <!-- Scripts KaiAdmin -->
+    <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
+    <script src="../../../assets/js/core/popper.min.js"></script>
+    <script src="../../../assets/js/core/bootstrap.min.js"></script>
+    <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../../../assets/js/kaiadmin.min.js"></script>
+
+    <!-- Cargar componentes y activar hamburguesa -->
+    <script>
+      // Header
+      fetch("../componentes/header.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("header-placeholder").innerHTML = data;
+        });
+
+      // Sidebar y activar botones
+
+      fetch("../componentes/sidebarGerente.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("sidebar-placeholder").innerHTML = data;
+
+          setTimeout(() => {
+            // --- Toggle hamburguesa ---
+            document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                document.body.classList.toggle("sidebar_minimize");
+              });
+            });
+            // --- Cerrar menú en móvil ---
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              link.addEventListener("click", () => {
+                if (window.innerWidth < 992) {
+                  document.body.classList.remove("sidebar_minimize");
+                }
+              });
+            });
+            // --- Marcar opción activa ---
+            document.querySelectorAll(".nav-item").forEach((item) => {
+              item.classList.remove("active");
+            });
+            const path = window.location.pathname.split("/").pop(); // nombre del archivo actual
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              if (
+                link.getAttribute("href") &&
+                link.getAttribute("href").includes(path)
+              ) {
+                link.parentElement.classList.add("active");
+              }
+            });
+          }, 100);
+        });
+
+  // Inicializar tooltips Bootstrap
+  document.addEventListener("DOMContentLoaded", function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+      new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+
+    </script>
+  </body>
+</html>
