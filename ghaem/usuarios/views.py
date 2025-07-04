@@ -3,6 +3,10 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
+
+from .permissions import IsGerente, IsEncargado, IsEmpleado
+
 
 from .models import User
 from .serializers import UserSerializer, RegisterSerializer
@@ -30,3 +34,22 @@ class PerfilView(APIView):
     def get(self, request):
         user = request.user
         return Response(UserSerializer(user).data)
+
+class AlgoProtegidoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+
+class DashboardGerenteApiView(APIView):
+    permission_classes = [IsAuthenticated, IsGerente]
+    def get(self, request):
+        return Response({"mensaje": "Solo gerente puede ver esto"})
+
+class DashboardEncargadoApiView(APIView):
+    permission_classes = [IsAuthenticated, IsEncargado]
+    def get(self, request):
+        return Response({"mensaje": "Solo encargado puede ver esto"})
+
+class DashboardEmpleadoApiView(APIView):
+    permission_classes = [IsAuthenticated, IsEmpleado]
+    def get(self, request):
+        return Response({"mensaje": "Solo empleado puede ver esto"})
