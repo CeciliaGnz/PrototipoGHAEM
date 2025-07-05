@@ -1,178 +1,255 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Inicio de sesión | GHAEM</title>
-  <!-- KaiAdmin Styles -->
-  <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
-  <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
-  <link rel="stylesheet" href="frontend/css/login.css" /> 
-</head>
-<body>
-  <div class="container-fluid login-wrapper">
-    <div class="login-container">
-      <div class="login-left d-flex align-items-center justify-content-center">
-        <i class="fa-solid fa-building fa-5x text-white opacity-75"></i>
-      </div>
-      <div class="login-right">
-        <div class="mb-2 text-muted fw-bold" style="font-size:1.2rem;">Inicio de sesión</div>
-        <span class="login-title">GHAEM</span>
-        <div class="login-subtitle mb-0">Bienvenido/a <span style="font-size:1.3rem;">👋</span></div>
-        <div class="mb-3 text-secondary">Ingresa tus credenciales de empleado asignadas</div>
-        <form id="loginForm" autocomplete="off" novalidate>
-          <div id="loginError" style="display:none;" class="alert alert-danger"></div>
-          <div class="mb-3">
-            <label class="form-label">Registrar asistencia</label>
-            <div class="row g-2 mb-2">
-              <div class="col">
-                <input type="text" class="form-control" value="" id="fechaActual" disabled>
-              </div>
-              <div class="col">
-                <input type="text" class="form-control" value="" id="horaActual" disabled>
-              </div>
-              <div class="col">
-                <input type="text" class="form-control" value="Hora de entrada" disabled>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio de sesión | GHAEM</title>
+    <!-- KaiAdmin Styles -->
+    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="frontend/css/login.css" />
+  </head>
+  <body>
+    <div class="container-fluid login-wrapper">
+      <div class="login-container">
+        <div
+          class="login-left d-flex align-items-center justify-content-center"
+        >
+          <i class="fa-solid fa-building fa-5x text-white opacity-75"></i>
+        </div>
+        <div class="login-right">
+          <div class="mb-2 text-muted fw-bold" style="font-size: 1.2rem">
+            Inicio de sesión
+          </div>
+          <span class="login-title">GHAEM</span>
+          <div class="login-subtitle mb-0">
+            Bienvenido/a <span style="font-size: 1.3rem">👋</span>
+          </div>
+          <div class="mb-3 text-secondary">
+            Ingresa tus credenciales de empleado asignadas
+          </div>
+          <form id="loginForm" autocomplete="off" novalidate>
+            <div
+              id="loginError"
+              style="display: none"
+              class="alert alert-danger"
+            ></div>
+            <div class="mb-3">
+              <label class="form-label">Registrar asistencia</label>
+              <div class="row g-2 mb-2">
+                <div class="col">
+                  <input
+                    type="text"
+                    class="form-control"
+                    value=""
+                    id="fechaActual"
+                    disabled
+                  />
+                </div>
+                <div class="col">
+                  <input
+                    type="text"
+                    class="form-control"
+                    value=""
+                    id="horaActual"
+                    disabled
+                  />
+                </div>
+                <div class="col">
+                  <input
+                    type="text"
+                    class="form-control"
+                    value="Hora de entrada"
+                    disabled
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">N. de identificación</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="fa-regular fa-user"></i></span>
-              <input
-                type="text"
-                class="form-control"
-                id="userId"
-                placeholder="0-0000-0000"
-                required
-                maxlength="12"
-              />
-              <div class="invalid-feedback">Ingrese su identificación.</div>
+            <div class="mb-3">
+              <label class="form-label">N. de identificación</label>
+              <div class="input-group">
+                <span class="input-group-text"
+                  ><i class="fa-regular fa-user"></i
+                ></span>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="userId"
+                  placeholder="0-0000-0000"
+                  required
+                  maxlength="12"
+                  autocomplete="username"
+                />
+                <div class="invalid-feedback">Ingrese su identificación.</div>
+              </div>
             </div>
-          </div>
-          <div class="mb-4">
-            <label class="form-label">Contraseña</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-              <input
-                type="password"
-                class="form-control"
-                id="userPassword"
-                required
-              />
-              <span class="input-group-text" style="cursor:pointer;" onclick="togglePassword()">
-                <i class="fa-regular fa-eye" id="eyeIcon"></i>
-              </span>
-              <div class="invalid-feedback">Ingrese su contraseña.</div>
+            <div class="mb-4">
+              <label class="form-label">Contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text"
+                  ><i class="fa-solid fa-lock"></i
+                ></span>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="userPassword"
+                  required
+                  autocomplete="current-password"
+                />
+                <span
+                  class="input-group-text"
+                  style="cursor: pointer"
+                  onclick="togglePassword()"
+                >
+                  <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                </span>
+                <div class="invalid-feedback">Ingrese su contraseña.</div>
+              </div>
             </div>
-          </div>
-          <button type="submit" class="btn btn-primary w-100 fw-bold" style="height:48px;font-size:1.1rem;">Ingresar</button>
-        </form>
+            <button
+              type="submit"
+              class="btn btn-primary w-100 fw-bold"
+              style="height: 48px; font-size: 1.1rem"
+            >
+              Ingresar
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-  <!-- KaiAdmin JS -->
-  <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
-  <script src="../../../assets/js/core/popper.min.js"></script>
-  <script src="../../../assets/js/core/bootstrap.min.js"></script>
-  <script src="../../../assets/js/kaiadmin.min.js"></script>
-  <script>
-    // Mostrar/ocultar contraseña
-    function togglePassword() {
-      const input = document.getElementById("userPassword");
-      const icon = document.getElementById("eyeIcon");
-      if (input.type === "password") {
-        input.type = "text";
-        icon.classList.remove("fa-eye");
-        icon.classList.add("fa-eye-slash");
-      } else {
-        input.type = "password";
-        icon.classList.remove("fa-eye-slash");
-        icon.classList.add("fa-eye");
-      }
-    }
-
-    // Cargar fecha/hora actual en inputs de asistencia
-    function pad(num) { return num < 10 ? "0" + num : num; }
-    function actualizarFechaHora() {
-      const now = new Date();
-      // Fecha formato: "Jun 10, 2024"
-      const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
-      document.getElementById("fechaActual").value =
-        meses[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
-      // Hora formato: "9:41 AM"
-      let horas = now.getHours();
-      const minutos = pad(now.getMinutes());
-      const ampm = horas >= 12 ? "PM" : "AM";
-      horas = horas % 12;
-      horas = horas ? horas : 12;
-      document.getElementById("horaActual").value = horas + ":" + minutos + " " + ampm;
-    }
-    actualizarFechaHora();
-
-    // Validación + envío al backend con fetch
-    document.getElementById('loginForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
-      let valido = true;
-      const userId = document.getElementById('userId');
-      const password = document.getElementById('userPassword');
-      const loginError = document.getElementById('loginError');
-      loginError.style.display = "none";
-
-      // Validación simple
-      if (!userId.value.trim()) {
-        userId.classList.add('is-invalid');
-        valido = false;
-      } else {
-        userId.classList.remove('is-invalid');
-      }
-      if (!password.value.trim()) {
-        password.classList.add('is-invalid');
-        valido = false;
-      } else {
-        password.classList.remove('is-invalid');
-      }
-      if (!valido) return;
-
-      // Enviar a backend (ajustar la URL)
-      try {
-        const response = await fetch('/api/usuarios/login/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username: userId.value.trim(),
-            password: password.value
-          })
-        });
-        const data = await response.json();
-        if (response.ok && data.access) {
-          // Guarda el token (puedes usar localStorage/cookies según tu preferencia)
-          localStorage.setItem('token', data.access);
-
-          // Redirige según el rol devuelto
-          if (data.user && data.user.rol) {
-            if (data.user.rol === "gerente") {
-              window.location.href = "/frontend/pages/gerente/dashboard.html";
-            } else if (data.user.rol === "encargado") {
-              window.location.href = "/frontend/pages/encargado/dashboard.html";
-            } else {
-              window.location.href = "/frontend/pages/empleado/dashboard.html";
-            }
-          } else {
-            window.location.href = "/frontend/pages/dashboard.html";
-          }
+    <!-- KaiAdmin JS -->
+    <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
+    <script src="../../../assets/js/core/popper.min.js"></script>
+    <script src="../../../assets/js/core/bootstrap.min.js"></script>
+    <script src="../../../assets/js/kaiadmin.min.js"></script>
+    <script>
+      // Mostrar/ocultar contraseña
+      function togglePassword() {
+        const input = document.getElementById("userPassword");
+        const icon = document.getElementById("eyeIcon");
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
         } else {
-          loginError.style.display = "block";
-          loginError.innerText = data.error || "Credenciales inválidas";
+          input.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
         }
-      } catch (e) {
-        loginError.style.display = "block";
-        loginError.innerText = "Error de conexión.";
       }
-    });
-  </script>
-</body>
+
+      // Cargar fecha/hora actual en inputs de asistencia
+      function pad(num) {
+        return num < 10 ? "0" + num : num;
+      }
+      function actualizarFechaHora() {
+        const now = new Date();
+        // Fecha formato: "Jun 10, 2024"
+        const meses = [
+          "Ene",
+          "Feb",
+          "Mar",
+          "Abr",
+          "May",
+          "Jun",
+          "Jul",
+          "Ago",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dic",
+        ];
+        document.getElementById("fechaActual").value =
+          meses[now.getMonth()] +
+          " " +
+          now.getDate() +
+          ", " +
+          now.getFullYear();
+        // Hora formato: "9:41 AM"
+        let horas = now.getHours();
+        const minutos = pad(now.getMinutes());
+        const ampm = horas >= 12 ? "PM" : "AM";
+        horas = horas % 12;
+        horas = horas ? horas : 12;
+        document.getElementById("horaActual").value =
+          horas + ":" + minutos + " " + ampm;
+      }
+      actualizarFechaHora();
+
+      // Validación + envío al backend con fetch
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          let valido = true;
+          const userId = document.getElementById("userId");
+          const password = document.getElementById("userPassword");
+          const loginError = document.getElementById("loginError");
+          loginError.style.display = "none";
+
+          // Validación simple
+          if (!userId.value.trim()) {
+            userId.classList.add("is-invalid");
+            valido = false;
+          } else {
+            userId.classList.remove("is-invalid");
+          }
+          if (!password.value.trim()) {
+            password.classList.add("is-invalid");
+            valido = false;
+          } else {
+            password.classList.remove("is-invalid");
+          }
+          if (!valido) return;
+
+          const body = JSON.stringify({
+            cedula: userId.value.trim(),
+            password: password.value,
+          });
+
+          try {
+            const response = await fetch(
+              "http://127.0.0.1:8000/api/usuarios/login/",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: body,
+              }
+            );
+            const data = await response.json();
+            if (response.ok && data.access) {
+              localStorage.setItem("token", data.access);
+
+              // Redirige según el rol devuelto por el backend
+              if (data.user && data.user.rol) {
+                if (data.user.rol === "gerente") {
+                  window.location.href =
+                    "../frontend/pages/gerente/dashboard.html";
+                } else if (data.user.rol === "encargado") {
+                  window.location.href =
+                    "../frontend/pages/encargado/encargado.html";
+                } else if (data.user.rol === "empleado") {
+                  window.location.href =
+                    "../frontend/pages/gerente/dashboard.html";
+                }
+              } else {
+                window.location.href = "/frontend/pages/dashboard.html";
+              }
+            } else {
+              loginError.style.display = "block";
+              loginError.innerText =
+                data.detail || data.error || "Credenciales inválidas";
+            }
+          } catch (e) {
+            loginError.style.display = "block";
+            loginError.innerText = "Error de conexión.";
+          }
+        });
+    </script>
+  </body>
 </html>

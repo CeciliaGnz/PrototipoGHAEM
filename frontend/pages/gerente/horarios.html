@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
     <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
-     <link rel="icon" href="../../../assets/img/InicialLogo.png" type="image/x-icon">
+    <link
+      rel="icon"
+      href="../../../assets/img/InicialLogo.png"
+      type="image/x-icon"
+    />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -29,57 +33,55 @@
               </div>
               <div class="card-body">
                 <!-- Sucursal -->
-                  <div class="col-md-3">
-                    <label>Consultar horario por sucursal:</label>
-                    <select class="form-select">
-                      <option selected>Todas</option>
-                      <option>Sucursal A</option>
-                      <option>Sucursal B</option>
-                    </select>
-                  </div>
+                <div class="col-md-3">
+                  <label>Consultar horario por sucursal:</label>
+                  <select class="form-select">
+                    <option selected>Todas</option>
+                    <option>Sucursal A</option>
+                    <option>Sucursal B</option>
+                  </select>
+                </div>
 
                 <div class="table-responsive mt-4">
-                      <table class="table table-bordered">
-                        <thead>
-                          <tr>
-                            <th>Nombre</th>
-                            <th>Lunes</th>
-                            <th>Martes</th>
-                            <th>Miércoles</th>
-                            <th>Jueves</th>
-                            <th>Viernes</th>
-                            <th>Sábado</th>
-                            <th>Domingo</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <th scope="row">Cecilia González</th>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                            <td>Libre</td>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Julia Martínez</th>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                            <td>Libre</td>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                            <td>10:00 a.m - 7:00 p.m</td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </div>
-
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Lunes</th>
+                        <th>Martes</th>
+                        <th>Miércoles</th>
+                        <th>Jueves</th>
+                        <th>Viernes</th>
+                        <th>Sábado</th>
+                        <th>Domingo</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">Cecilia González</th>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>Libre</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Julia Martínez</th>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>Libre</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-    
           </div>
         </div>
       </div>
@@ -94,28 +96,34 @@
 
     <!-- Cargar componentes y activar hamburguesa -->
     <script>
-      // Header
+      // Cargar header
       fetch("../componentes/header.html")
         .then((res) => res.text())
         .then((data) => {
           document.getElementById("header-placeholder").innerHTML = data;
+
+          // --- Conectar el botón de logout aquí ---
+          const logoutBtn = document.getElementById("logoutBtn");
+          if (logoutBtn) {
+            logoutBtn.addEventListener("click", function (e) {
+              e.preventDefault();
+              localStorage.removeItem("token");
+              window.location.href = "../../../index.html";
+            });
+          }
         });
 
-      // Sidebar y activar botones
-
+      // Cargar sidebar
       fetch("../componentes/sidebarGerente.html")
         .then((res) => res.text())
         .then((data) => {
           document.getElementById("sidebar-placeholder").innerHTML = data;
-
           setTimeout(() => {
-            // --- Toggle hamburguesa ---
             document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
               btn.addEventListener("click", () => {
                 document.body.classList.toggle("sidebar_minimize");
               });
             });
-            // --- Cerrar menú en móvil ---
             document.querySelectorAll(".sidebar-link").forEach((link) => {
               link.addEventListener("click", () => {
                 if (window.innerWidth < 992) {
@@ -123,11 +131,10 @@
                 }
               });
             });
-            // --- Marcar opción activa ---
             document.querySelectorAll(".nav-item").forEach((item) => {
               item.classList.remove("active");
             });
-            const path = window.location.pathname.split("/").pop(); // nombre del archivo actual
+            const path = window.location.pathname.split("/").pop();
             document.querySelectorAll(".sidebar-link").forEach((link) => {
               if (
                 link.getAttribute("href") &&
@@ -138,6 +145,26 @@
             });
           }, 100);
         });
+    </script>
+
+    <script>
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "../../../index.html"; // O la ruta real a tu login
+      } else {
+        fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+          headers: { Authorization: "Bearer " + token },
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            console.log("Perfil:", data); // <-- Mira el valor aquí en consola
+            if (data.rol !== "gerente") {
+              window.location.href = "../../no-autorizado.html";
+            }
+            // Si es gerente, no hagas nada: ya puede ver la página
+          })
+          .catch(() => (window.location.href = "../../../index.html"));
+      }
     </script>
   </body>
 </html>
