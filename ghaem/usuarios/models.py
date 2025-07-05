@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.conf import settings
 
 ROLES = (
     ('gerente', 'Gerente'),
@@ -37,3 +38,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.nombre} ({self.cedula})"
+
+class Asistencia(models.Model):
+    TIPO_CHOICES = (
+        ('entrada', 'Hora de entrada'),
+        ('salida', 'Hora de salida'),
+    )
+
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    fecha = models.DateField(auto_now_add=True)
+    hora = models.TimeField(auto_now_add=True)
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
+
+    def __str__(self):
+        return f"{self.usuario.cedula} - {self.tipo} - {self.fecha} {self.hora}"

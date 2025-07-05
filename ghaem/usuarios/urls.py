@@ -1,4 +1,6 @@
 from django.urls import path
+
+from .views import AsistenciaView
 from .views import (
     LoginView,
     PerfilView,
@@ -17,3 +19,6 @@ urlpatterns = [
     path('dashboard/empleado/', DashboardEmpleadoApiView.as_view(), name='dashboard-empleado'),
 ]
 
+urlpatterns += [
+    path('asistencia/', AsistenciaView.as_view(), name='asistencia'),
+]

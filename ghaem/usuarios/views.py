@@ -4,6 +4,10 @@ from rest_framework import status, permissions
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from django.utils import timezone
+from .models import Asistencia
+from .serializers import AsistenciaSerializer
+
 
 from .permissions import IsGerente, IsEncargado, IsEmpleado
 
@@ -53,3 +57,55 @@ class DashboardEmpleadoApiView(APIView):
     permission_classes = [IsAuthenticated, IsEmpleado]
     def get(self, request):
         return Response({"mensaje": "Solo empleado puede ver esto"})
+    
+class AsistenciaView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    # Registrar asistencia
+    def post(self, request):
+        tipo = request.data.get('tipo')
+        if tipo not in ['entrada', 'salida']:
+            return Response({'error': 'Tipo inválido'}, status=400)
+        
+        hoy = timezone.now().date()
+        
+        if tipo == 'salida':
+            # Si NO hay entrada hoy, no puedes marcar salida
+            ya_entro = Asistencia.objects.filter(
+                usuario=request.user,
+                tipo='entrada',
+                fecha=hoy
+            ).exists()
+            if not ya_entro:
+                return Response({'error': 'No puedes marcar salida sin haber registrado la entrada primero.'}, status=400)
+            
+            # Si ya marcó salida hoy, no puedes marcar de nuevo
+            ya_marco_salida = Asistencia.objects.filter(
+                usuario=request.user,
+                tipo='salida',
+                fecha=hoy
+            ).exists()
+            if ya_marco_salida:
+                return Response({'error': 'Ya marcaste salida hoy'}, status=400)
+
+        if tipo == 'entrada':
+            ya_marcada = Asistencia.objects.filter(
+                usuario=request.user,
+                tipo='entrada',
+                fecha=hoy
+            ).exists()
+            if ya_marcada:
+                return Response({'error': f'Ya marcaste {tipo} hoy'}, status=400)
+        
+        asistencia = Asistencia.objects.create(
+            usuario=request.user,
+            tipo=tipo
+        )
+        serializer = AsistenciaSerializer(asistencia)
+        return Response(serializer.data, status=201)
+
+    # Listar asistencias
+    def get(self, request):
+        asistencias = Asistencia.objects.filter(usuario=request.user).order_by('-fecha', '-hora')
+        serializer = AsistenciaSerializer(asistencias, many=True)
+        return Response(serializer.data)

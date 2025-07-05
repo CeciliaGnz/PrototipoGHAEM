@@ -61,15 +61,19 @@
                   />
                 </div>
                 <div class="col">
-                  <input
-                    type="text"
+                  <!-- Select moderno para tipo de registro -->
+                  <select
                     class="form-control"
-                    value="Hora de entrada"
-                    disabled
-                  />
+                    id="tipoRegistro"
+                    style="appearance: auto; cursor: pointer"
+                  >
+                    <option value="entrada">Hora de entrada</option>
+                    <option value="salida">Hora de salida</option>
+                  </select>
                 </div>
               </div>
             </div>
+
             <div class="mb-3">
               <label class="form-label">N. de identificación</label>
               <div class="input-group">
@@ -189,6 +193,7 @@
           let valido = true;
           const userId = document.getElementById("userId");
           const password = document.getElementById("userPassword");
+          const tipoRegistro = document.getElementById("tipoRegistro").value;
           const loginError = document.getElementById("loginError");
           loginError.style.display = "none";
 
@@ -210,6 +215,7 @@
           const body = JSON.stringify({
             cedula: userId.value.trim(),
             password: password.value,
+            tipo: tipoRegistro,
           });
 
           try {
@@ -225,7 +231,33 @@
             if (response.ok && data.access) {
               localStorage.setItem("token", data.access);
 
-              // Redirige según el rol devuelto por el backend
+              // REGISTRO ASISTENCIA
+              const token = data.access;
+              const asistenciaResp = await fetch(
+                "http://127.0.0.1:8000/api/usuarios/asistencia/",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
+                  },
+                  body: JSON.stringify({ tipo: tipoRegistro }),
+                }
+              );
+
+              const asistenciaData = await asistenciaResp.json();
+
+              // Aquí validamos si fue éxito o error
+              if (!asistenciaResp.ok) {
+                loginError.style.display = "block";
+                loginError.innerText =
+                  asistenciaData.detail ||
+                  asistenciaData.error ||
+                  "Ya marcaste asistencia hoy.";
+                return;
+              }
+
+              // SOLO SI asistencia fue OK, redirigimos
               if (data.user && data.user.rol) {
                 if (data.user.rol === "gerente") {
                   window.location.href =

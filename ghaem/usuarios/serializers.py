@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User
+from .models import Asistencia
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,3 +22,10 @@ class RegisterSerializer(serializers.ModelSerializer):
             rol=validated_data.get('rol', 'empleado')
         )
         return user
+
+
+class AsistenciaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Asistencia
+        fields = ['id', 'usuario', 'fecha', 'hora', 'tipo']
+        read_only_fields = ['usuario', 'fecha', 'hora']
