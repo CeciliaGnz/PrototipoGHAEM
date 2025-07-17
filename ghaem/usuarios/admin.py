@@ -1,6 +1,54 @@
 from django.contrib import admin
+from django import forms
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .models import User, Asistencia
 
+# Formulario para crear usuarios desde el admin
+class UserCreationForm(forms.ModelForm):
+    password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = ('cedula', 'nombre', 'rol')
+
+    def clean_password2(self):
+        if self.cleaned_data.get("password1") != self.cleaned_data.get("password2"):
+            raise forms.ValidationError("Las contraseñas no coinciden.")
+        return self.cleaned_data.get("password2")
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+        return user
+
+# Admin de usuarios
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    add_form = UserCreationForm
+    list_display = ('cedula', 'nombre', 'rol', 'is_active', 'is_staff')
+    list_filter = ('rol', 'is_active')
+    search_fields = ('cedula', 'nombre')
+    ordering = ('cedula',)
+    filter_horizontal = ('groups', 'user_permissions')
+
+    fieldsets = (
+        (None, {'fields': ('cedula', 'password')}),
+        ('Información personal', {'fields': ['nombre']}),
+        ('Permisos', {'fields': ('rol', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('cedula', 'nombre', 'rol', 'password1', 'password2'),
+        }),
+    )
+
+# Admin de asistencias
 @admin.register(Asistencia)
 class AsistenciaAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'cedula', 'nombre', 'tipo', 'fecha', 'hora')
@@ -9,7 +57,6 @@ class AsistenciaAdmin(admin.ModelAdmin):
     date_hierarchy = 'fecha'
     ordering = ('-fecha', '-hora')
 
-    # Mostrar cédula y nombre directamente en la tabla
     def cedula(self, obj):
         return obj.usuario.cedula
     cedula.short_description = "Cédula"
@@ -17,9 +64,3 @@ class AsistenciaAdmin(admin.ModelAdmin):
     def nombre(self, obj):
         return obj.usuario.nombre
     nombre.short_description = "Nombre"
-
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('cedula', 'nombre', 'rol', 'is_active', 'is_staff')
-    list_filter = ('rol', 'is_active')
-    search_fields = ('cedula', 'nombre')
