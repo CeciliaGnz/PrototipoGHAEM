@@ -51,7 +51,7 @@ class UserAdmin(BaseUserAdmin):
 # Admin de asistencias
 @admin.register(Asistencia)
 class AsistenciaAdmin(admin.ModelAdmin):
-    list_display = ('usuario', 'cedula', 'nombre', 'tipo', 'fecha', 'hora')
+    list_display = ('usuario', 'cedula', 'nombre', 'rol', 'tipo', 'fecha', 'hora')
     list_filter = ('tipo', 'fecha', 'usuario__rol')
     search_fields = ('usuario__cedula', 'usuario__nombre')
     date_hierarchy = 'fecha'
@@ -64,3 +64,7 @@ class AsistenciaAdmin(admin.ModelAdmin):
     def nombre(self, obj):
         return obj.usuario.nombre
     nombre.short_description = "Nombre"
+
+    def rol(self, obj):
+        return obj.usuario.rol
+    rol.short_description = "Rol"
