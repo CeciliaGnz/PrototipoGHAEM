@@ -1,12 +1,12 @@
 from django.urls import path
-
-from .views import AsistenciaView
 from .views import (
     LoginView,
     PerfilView,
     DashboardGerenteApiView,
     DashboardEncargadoApiView,
     DashboardEmpleadoApiView,
+    AsistenciaView,
+    AsistenciasTodasView,
 )
 
 urlpatterns = [
@@ -17,8 +17,7 @@ urlpatterns = [
     path('dashboard/gerente/', DashboardGerenteApiView.as_view(), name='dashboard-gerente'),
     path('dashboard/encargado/', DashboardEncargadoApiView.as_view(), name='dashboard-encargado'),
     path('dashboard/empleado/', DashboardEmpleadoApiView.as_view(), name='dashboard-empleado'),
-]
 
-urlpatterns += [
     path('asistencia/', AsistenciaView.as_view(), name='asistencia'),
+    path('asistencias-todas/', AsistenciasTodasView.as_view(), name='asistencias-todas'),
 ]

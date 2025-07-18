@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from .models import Asistencia
 from .serializers import AsistenciaSerializer
+from rest_framework import serializers
 
 
 from .permissions import IsGerente, IsEncargado, IsEmpleado
@@ -41,7 +42,6 @@ class PerfilView(APIView):
 
 class AlgoProtegidoView(APIView):
     permission_classes = [IsAuthenticated]
-
 
 class DashboardGerenteApiView(APIView):
     permission_classes = [IsAuthenticated, IsGerente]
@@ -109,3 +109,24 @@ class AsistenciaView(APIView):
         asistencias = Asistencia.objects.filter(usuario=request.user).order_by('-fecha', '-hora')
         serializer = AsistenciaSerializer(asistencias, many=True)
         return Response(serializer.data)
+
+
+class AsistenciaSerializer(serializers.ModelSerializer):
+    nombre = serializers.CharField(source='usuario.nombre', read_only=True)
+    rol = serializers.CharField(source='usuario.rol', read_only=True)
+    hora = serializers.TimeField(format='%H:%M', read_only=True) 
+    class Meta:
+        model = Asistencia
+        fields = ['id', 'tipo', 'fecha', 'hora', 'nombre', 'rol']
+
+    
+    
+class AsistenciasTodasView(APIView):
+    permission_classes = [IsAuthenticated,IsGerente]
+
+    def get(self, request):
+        asistencias = Asistencia.objects.exclude(usuario__rol='gerente')
+        serializer = AsistenciaSerializer(asistencias, many=True)
+        return Response(serializer.data)
+
+
