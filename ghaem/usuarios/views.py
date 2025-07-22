@@ -8,6 +8,9 @@ from django.utils import timezone
 from .models import Asistencia
 from .serializers import AsistenciaSerializer
 from rest_framework import serializers
+from rest_framework import generics 
+
+
 
 
 from .permissions import IsGerente, IsEncargado, IsEmpleado
@@ -111,6 +114,7 @@ class AsistenciaView(APIView):
         return Response(serializer.data)
 
 
+#TODAS LAS ASISTENCIAS
 class AsistenciaSerializer(serializers.ModelSerializer):
     nombre = serializers.CharField(source='usuario.nombre', read_only=True)
     rol = serializers.CharField(source='usuario.rol', read_only=True)
@@ -125,8 +129,33 @@ class AsistenciasTodasView(APIView):
     permission_classes = [IsAuthenticated,IsGerente]
 
     def get(self, request):
-        asistencias = Asistencia.objects.exclude(usuario__rol='gerente')
+        asistencias = Asistencia.objects.exclude(usuario__rol='gerente').order_by('-fecha', '-hora')
         serializer = AsistenciaSerializer(asistencias, many=True)
         return Response(serializer.data)
 
+#EQUIPO
+class EmpleadosListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated, IsGerente]
+    serializer_class = UserSerializer
 
+    def get_queryset(self):
+        return User.objects.exclude(rol='gerente')
+    
+class EmpleadosListCreateView(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated, IsGerente]
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return RegisterSerializer
+        return UserSerializer
+
+    def get_queryset(self):
+        return User.objects.exclude(rol='gerente')
+
+class EmpleadoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsGerente]
+    serializer_class = UserSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return User.objects.exclude(rol='gerente')

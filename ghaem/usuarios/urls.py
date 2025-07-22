@@ -7,6 +7,9 @@ from .views import (
     DashboardEmpleadoApiView,
     AsistenciaView,
     AsistenciasTodasView,
+    EmpleadosListView, 
+    EmpleadoDetailView,
+    EmpleadosListCreateView,
 )
 
 urlpatterns = [
@@ -20,4 +23,8 @@ urlpatterns = [
 
     path('asistencia/', AsistenciaView.as_view(), name='asistencia'),
     path('asistencias-todas/', AsistenciasTodasView.as_view(), name='asistencias-todas'),
+
+    # Vista de empleados
+    path('empleados/', EmpleadosListCreateView.as_view(), name='empleados-list-create'),
+    path('empleados/<int:id>/', EmpleadoDetailView.as_view(), name='empleado-detail'),
 ]
