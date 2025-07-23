@@ -33,12 +33,28 @@
           <div class="mb-3 text-secondary">
             Ingresa tus credenciales de empleado asignadas
           </div>
-          <form id="loginForm" autocomplete="off" novalidate>
-            <div
-              id="loginError"
-              style="display: none"
-              class="alert alert-danger"
-            ></div>
+          <form
+            id="loginForm"
+            autocomplete="off"
+            novalidate
+            onsubmit="return false;"
+          >
+            <div id="loginMessageBox" style="display: none" class="alert">
+              <div id="loginMessageText"></div>
+              <button
+                type="button"
+                id="continueBtn"
+                class="btn btn-outline-primary mt-2 fw-semibold d-inline-flex align-items-center gap-2"
+                style="
+                  display: none;
+                  font-size: 0.95rem;
+                  padding: 6px 0.75rem;
+                  border-radius: 6px;
+                "
+              >
+                <i class="fa-solid fa-arrow-right"></i> Continuar
+              </button>
+            </div>
             <div class="mb-3">
               <label class="form-label">Registrar asistencia</label>
               <div class="row g-2 mb-2">
@@ -116,7 +132,8 @@
               </div>
             </div>
             <button
-              type="submit"
+              type="button"
+              id="loginSubmitBtn"
               class="btn btn-primary w-100 fw-bold"
               style="height: 48px; font-size: 1.1rem"
             >
@@ -132,28 +149,20 @@
     <script src="../../../assets/js/core/bootstrap.min.js"></script>
     <script src="../../../assets/js/kaiadmin.min.js"></script>
     <script>
-      // Mostrar/ocultar contraseña
       function togglePassword() {
         const input = document.getElementById("userPassword");
         const icon = document.getElementById("eyeIcon");
-        if (input.type === "password") {
-          input.type = "text";
-          icon.classList.remove("fa-eye");
-          icon.classList.add("fa-eye-slash");
-        } else {
-          input.type = "password";
-          icon.classList.remove("fa-eye-slash");
-          icon.classList.add("fa-eye");
-        }
+        input.type = input.type === "password" ? "text" : "password";
+        icon.classList.toggle("fa-eye");
+        icon.classList.toggle("fa-eye-slash");
       }
 
-      // Cargar fecha/hora actual en inputs de asistencia
       function pad(num) {
         return num < 10 ? "0" + num : num;
       }
+
       function actualizarFechaHora() {
         const now = new Date();
-        // Fecha formato: "Jun 10, 2024"
         const meses = [
           "Ene",
           "Feb",
@@ -168,120 +177,165 @@
           "Nov",
           "Dic",
         ];
-        document.getElementById("fechaActual").value =
-          meses[now.getMonth()] +
-          " " +
-          now.getDate() +
-          ", " +
-          now.getFullYear();
-        // Hora formato: "9:41 AM"
+        document.getElementById("fechaActual").value = `${
+          meses[now.getMonth()]
+        } ${now.getDate()}, ${now.getFullYear()}`;
         let horas = now.getHours();
         const minutos = pad(now.getMinutes());
         const ampm = horas >= 12 ? "PM" : "AM";
-        horas = horas % 12;
-        horas = horas ? horas : 12;
-        document.getElementById("horaActual").value =
-          horas + ":" + minutos + " " + ampm;
+        horas = horas % 12 || 12;
+        document.getElementById(
+          "horaActual"
+        ).value = `${horas}:${minutos} ${ampm}`;
       }
+
       actualizarFechaHora();
 
-      // Validación + envío al backend con fetch
-      document
-        .getElementById("loginForm")
-        .addEventListener("submit", async function (event) {
-          event.preventDefault();
-          let valido = true;
-          const userId = document.getElementById("userId");
-          const password = document.getElementById("userPassword");
-          const tipoRegistro = document.getElementById("tipoRegistro").value;
-          const loginError = document.getElementById("loginError");
-          loginError.style.display = "none";
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("loginSubmitBtn")
+          .addEventListener("click", async function (event) {
+            event.preventDefault();
 
-          // Validación simple
-          if (!userId.value.trim()) {
-            userId.classList.add("is-invalid");
-            valido = false;
-          } else {
-            userId.classList.remove("is-invalid");
-          }
-          if (!password.value.trim()) {
-            password.classList.add("is-invalid");
-            valido = false;
-          } else {
-            password.classList.remove("is-invalid");
-          }
-          if (!valido) return;
+            const userId = document.getElementById("userId");
+            const password = document.getElementById("userPassword");
+            const tipoRegistro = document.getElementById("tipoRegistro").value;
+            const loginBox = document.getElementById("loginMessageBox");
+            const loginText = document.getElementById("loginMessageText");
+            const continueBtn = document.getElementById("continueBtn");
 
-          const body = JSON.stringify({
-            cedula: userId.value.trim(),
-            password: password.value,
-            tipo: tipoRegistro,
-          });
+            let valido = true;
+            if (!userId.value.trim()) {
+              userId.classList.add("is-invalid");
+              valido = false;
+            } else {
+              userId.classList.remove("is-invalid");
+            }
 
-          try {
-            const response = await fetch(
-              "http://127.0.0.1:8000/api/usuarios/login/",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: body,
-              }
-            );
-            const data = await response.json();
-            if (response.ok && data.access) {
-              localStorage.setItem("token", data.access);
+            if (!password.value.trim()) {
+              password.classList.add("is-invalid");
+              valido = false;
+            } else {
+              password.classList.remove("is-invalid");
+            }
 
-              // REGISTRO ASISTENCIA
-              const token = data.access;
-              const asistenciaResp = await fetch(
-                "http://127.0.0.1:8000/api/usuarios/asistencia/",
+            if (!valido) return;
+
+            const loginData = {
+              cedula: userId.value.trim(),
+              password: password.value,
+              tipo: tipoRegistro,
+            };
+
+            try {
+              const loginResponse = await fetch(
+                "http://127.0.0.1:8000/api/usuarios/login/",
                 {
                   method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
-                  },
-                  body: JSON.stringify({ tipo: tipoRegistro }),
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(loginData),
                 }
               );
 
-              const asistenciaData = await asistenciaResp.json();
+              const loginDataResp = await loginResponse.json();
 
-              // Aquí validamos si fue éxito o error
-              if (!asistenciaResp.ok) {
-                loginError.style.display = "block";
-                loginError.innerText =
-                  asistenciaData.detail ||
-                  asistenciaData.error ||
-                  "Ya marcaste asistencia hoy.";
-                return;
-              }
+              if (loginResponse.ok && loginDataResp.access) {
+                const token = loginDataResp.access;
+                localStorage.setItem("token", token);
 
-              // SOLO SI asistencia fue OK, redirigimos
-              if (data.user && data.user.rol) {
-                if (data.user.rol === "gerente") {
+                const asistenciaResp = await fetch(
+                  "http://127.0.0.1:8000/api/usuarios/asistencia/",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: "Bearer " + token,
+                    },
+                    body: JSON.stringify({ tipo: tipoRegistro }),
+                  }
+                );
+
+                const asistenciaData = await asistenciaResp.json();
+                const rol = loginDataResp.user?.rol;
+
+                // Ocultar el botón SIEMPRE al inicio
+                continueBtn.classList.add("force-hide");
+                loginBox.style.display = "block";
+
+                // Registro exitoso → redirige
+                if (asistenciaResp.status === 201 && asistenciaData.tipo) {
                   window.location.href =
-                    "../frontend/pages/gerente/dashboard.html";
-                } else if (data.user.rol === "encargado") {
-                  window.location.href =
-                    "../frontend/pages/encargado/dashboardEncargado.html";
-                } else if (data.user.rol === "empleado") {
-                  window.location.href =
-                    "../frontend/pages/empleado/dashboardEmpleado.html";
+                    rol === "gerente"
+                      ? "../frontend/pages/gerente/dashboard.html"
+                      : rol === "encargado"
+                      ? "../frontend/pages/encargado/dashboardEncargado.html"
+                      : rol === "empleado"
+                      ? "../frontend/pages/empleado/dashboardEmpleado.html"
+                      : "/";
+                }
+
+                // Ya marcó entrada o salida → mensaje y botón visible
+                else if (
+                  asistenciaResp.status === 200 &&
+                  (asistenciaData.mensaje === "Ya marcaste entrada hoy" ||
+                    asistenciaData.mensaje === "Ya marcaste salida hoy")
+                ) {
+                  loginBox.className = "alert alert-warning text-center";
+                  loginText.innerText = asistenciaData.mensaje;
+                  continueBtn.classList.remove("force-hide");
+
+                  continueBtn.onclick = function () {
+                    if (rol === "gerente") {
+                      window.location.href =
+                        "../frontend/pages/gerente/dashboard.html";
+                    } else if (rol === "encargado") {
+                      window.location.href =
+                        "../frontend/pages/encargado/dashboardEncargado.html";
+                    } else if (rol === "empleado") {
+                      window.location.href =
+                        "../frontend/pages/empleado/dashboardEmpleado.html";
+                    }
+                  };
+                }
+
+                // Salida sin haber entrado → error sin botón
+                else if (
+                  asistenciaResp.status === 400 &&
+                  asistenciaData.error ===
+                    "No puedes marcar salida sin haber registrado la entrada primero."
+                ) {
+                  loginBox.className = "alert alert-danger text-center";
+                  loginText.innerText = asistenciaData.error;
+                  continueBtn.classList.add("force-hide");
+                }
+
+                // Otro error → mostrar mensaje sin botón
+                else {
+                  loginBox.className = "alert alert-danger text-center";
+                  loginText.innerText =
+                    asistenciaData.error ||
+                    asistenciaData.mensaje ||
+                    "Error al registrar asistencia.";
+                  continueBtn.classList.add("force-hide");
                 }
               } else {
-                window.location.href = "/frontend/pages/dashboard.html";
+                // Error en login
+                loginBox.style.display = "block";
+                loginBox.className = "alert alert-danger text-center";
+                loginText.innerText =
+                  loginDataResp.error ||
+                  loginDataResp.detail ||
+                  "Credenciales inválidas.";
+                continueBtn.classList.add("force-hide");
               }
-            } else {
-              loginError.style.display = "block";
-              loginError.innerText =
-                data.detail || data.error || "Credenciales inválidas";
+            } catch (e) {
+              loginBox.style.display = "block";
+              loginBox.className = "alert alert-danger text-center";
+              loginText.innerText = "Error de conexión con el servidor.";
+              continueBtn.classList.add("force-hide");
             }
-          } catch (e) {
-            loginError.style.display = "block";
-            loginError.innerText = "Error de conexión.";
-          }
-        });
+          });
+      });
     </script>
   </body>
 </html>

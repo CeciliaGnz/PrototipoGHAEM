@@ -97,3 +97,6 @@
       .login-container { flex-direction: column; min-width: 330px; }
       .login-left { min-height: 120px; min-width: 100%; }
     }
+    #continueBtn.force-hide {
+      display: none !important;
+    }

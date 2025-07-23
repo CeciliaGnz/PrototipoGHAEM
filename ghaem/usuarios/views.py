@@ -11,8 +11,8 @@ from rest_framework import serializers
 from rest_framework import generics 
 
 
-
-
+from django.utils.timezone import localtime, now
+from django.db import IntegrityError
 from .permissions import IsGerente, IsEncargado, IsEmpleado
 
 
@@ -64,48 +64,37 @@ class DashboardEmpleadoApiView(APIView):
 class AsistenciaView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    # Registrar asistencia
     def post(self, request):
         tipo = request.data.get('tipo')
         if tipo not in ['entrada', 'salida']:
             return Response({'error': 'Tipo inválido'}, status=400)
-        
-        hoy = timezone.now().date()
-        
+
+        hoy = timezone.localtime().date()
+        usuario = request.user
+
         if tipo == 'salida':
-            # Si NO hay entrada hoy, no puedes marcar salida
-            ya_entro = Asistencia.objects.filter(
-                usuario=request.user,
-                tipo='entrada',
-                fecha=hoy
-            ).exists()
-            if not ya_entro:
+            if not Asistencia.objects.filter(usuario=usuario, tipo='entrada', fecha=hoy).exists():
                 return Response({'error': 'No puedes marcar salida sin haber registrado la entrada primero.'}, status=400)
-            
-            # Si ya marcó salida hoy, no puedes marcar de nuevo
-            ya_marco_salida = Asistencia.objects.filter(
-                usuario=request.user,
-                tipo='salida',
-                fecha=hoy
-            ).exists()
-            if ya_marco_salida:
-                return Response({'error': 'Ya marcaste salida hoy'}, status=400)
+
+            if Asistencia.objects.filter(usuario=usuario, tipo='salida', fecha=hoy).exists():
+                return Response({'mensaje': 'Ya marcaste salida hoy'}, status=200)
 
         if tipo == 'entrada':
-            ya_marcada = Asistencia.objects.filter(
-                usuario=request.user,
-                tipo='entrada',
-                fecha=hoy
-            ).exists()
-            if ya_marcada:
-                return Response({'error': f'Ya marcaste {tipo} hoy'}, status=400)
-        
+            if Asistencia.objects.filter(usuario=usuario, tipo='entrada', fecha=hoy).exists():
+                return Response({'mensaje': f'Ya marcaste {tipo} hoy'}, status=200)
+
         asistencia = Asistencia.objects.create(
             usuario=request.user,
-            tipo=tipo
+            tipo=tipo,
+            hora=timezone.localtime().time()
         )
+
         serializer = AsistenciaSerializer(asistencia)
-        return Response(serializer.data, status=201)
+        return Response({
+            'mensaje': f'{tipo.capitalize()} registrada correctamente.',
+            'tipo': tipo,
+            'asistencia': serializer.data
+        }, status=201)
 
     # Listar asistencias
     def get(self, request):

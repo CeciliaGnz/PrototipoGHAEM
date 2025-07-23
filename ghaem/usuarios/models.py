@@ -47,8 +47,11 @@ class Asistencia(models.Model):
 
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fecha = models.DateField(auto_now_add=True)
-    hora = models.TimeField(auto_now_add=True)
+    hora = models.TimeField()
     tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
+
+    class Meta:
+        unique_together = ('usuario', 'fecha', 'tipo')  # 🔐 evita duplicados
 
     def __str__(self):
         return f"{self.usuario.cedula} - {self.tipo} - {self.fecha} {self.hora}"
