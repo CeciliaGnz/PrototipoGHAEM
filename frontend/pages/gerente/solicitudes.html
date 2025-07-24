@@ -25,7 +25,7 @@
           <div class="page-inner">
             <div class="card mt-4">
               <div class="card-header">
-                <h5>Mostrando un total de <span>2</span> solicitudes</h5>
+                <h5>Mostrando un total de <span id="totalSolicitudes">0</span> solicitudes</h5>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
@@ -42,32 +42,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1.</td>
-                        <td>Cecilia González</td>
-                        <td><span class="text-muted">Encargada</span></td>
-                        <td>Vacaciones</td>
-                        <td>11 Jun. 2024</td>
-                        <td>13 Jun. 2024</td>
-                        <td>Rechazada</td>
-                      </tr>
-                      <!--2-->
-                       <tr>
-                        <td>2.</td>
-                        <td>Cecilia González</td>
-                        <td><span class="text-muted">Encargada</span></td>
-                        <td>Vacaciones</td>
-                        <td>11 Jun. 2024</td>
-                        <td>13 Jun. 2024</td>
-                        <td>
-                        <button type="button" class="btn btn-icon btn-success btn-sm me-1" title="Aceptar">
-                        <i class="fa fa-check"></i>
-                        </button>
-                        <button type="button" class="btn btn-icon btn-danger btn-sm" title="Rechazar">
-                        <i class="fa fa-times"></i>
-                        </button></i>
-                      </td>
-                      </tr>
+                     <!--contenido-->
                     </tbody>
                   </table>
                 </div>
@@ -162,8 +137,8 @@
             });
           }, 100);
         });
-    </script>
-    
+
+        </script>
 
 <script>
 const token = localStorage.getItem('token');
@@ -182,6 +157,68 @@ if (!token) {
     // Si es gerente, no hagas nada: ya puede ver la página
   })
   .catch(() => window.location.href = "../../../index.html");
+}
+
+
+//APROBAR O RECHAZAR SOLICITUDES 
+const tablaBody = document.querySelector("table tbody");
+
+fetch("http://127.0.0.1:8000/api/usuarios/solicitudes-gerente/", {
+  headers: {
+    Authorization: "Bearer " + token,
+  },
+})
+.then(res => res.json())
+.then(data => {
+document.getElementById('totalSolicitudes').textContent = data.length;
+
+
+  tablaBody.innerHTML = "";
+  data.forEach((sol, i) => {
+const acciones = sol.estado.toLowerCase() === "pendiente"
+  ? `<button type="button" class="btn btn-icon btn-success btn-sm me-1" title="Aceptar" onclick="actualizarEstado(${sol.id}, 'aprobado')">
+        <i class="fa fa-check"></i>
+     </button>
+     <button type="button" class="btn btn-icon btn-danger btn-sm" title="Rechazar" onclick="actualizarEstado(${sol.id}, 'rechazado')">
+        <i class="fa fa-times"></i>
+     </button>`
+  : sol.estado.toLowerCase() === "aprobado"
+    ? `<span class="badge bg-success">Aprobado</span>`
+    : sol.estado.toLowerCase() === "rechazado"
+      ? `<span class="badge bg-danger">Rechazado</span>`
+      : `<span class="badge bg-secondary">${sol.estado.charAt(0).toUpperCase() + sol.estado.slice(1)}</span>`;
+
+
+    const row = `
+      <tr>
+        <td>${i + 1}.</td>
+        <td>${sol.nombre || "N/A"}</td>
+        <td><span class="text-muted">${sol.rol}</span></td>
+        <td>${sol.motivo}</td>
+        <td>${sol.fecha_inicio}</td>
+        <td>${sol.fecha_fin}</td>
+        <td>${acciones}</td>
+      </tr>
+    `;
+    tablaBody.insertAdjacentHTML("beforeend", row);
+  });
+});
+
+function actualizarEstado(id, nuevoEstado) {
+  fetch(`http://127.0.0.1:8000/api/usuarios/solicitudes-gerente/${id}/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify({ estado: nuevoEstado })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Error al actualizar");
+    return res.json();
+  })
+  .then(() => location.reload())
+  .catch(err => alert("Error al actualizar estado"));
 }
   </script>
   </body>

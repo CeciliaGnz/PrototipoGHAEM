@@ -55,3 +55,22 @@ class Asistencia(models.Model):
 
     def __str__(self):
         return f"{self.usuario.cedula} - {self.tipo} - {self.fecha} {self.hora}"
+    
+
+#MODEL DE SOLICITUDES
+ESTADOS = (
+    ('pendiente', 'En espera'),
+    ('aprobado', 'Aprobada'),
+    ('rechazado', 'Rechazada'),
+)
+
+class SolicitudDia(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    motivo = models.TextField()
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    estado = models.CharField(max_length=10, choices=ESTADOS, default='pendiente')
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.usuario.nombre} - {self.motivo} ({self.estado})"

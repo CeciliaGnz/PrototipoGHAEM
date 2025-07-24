@@ -10,6 +10,9 @@ from .views import (
     EmpleadosListView, 
     EmpleadoDetailView,
     EmpleadosListCreateView,
+    SolicitudDiaEmpleadoView,  # <-- Añade esto
+    SolicitudDiaGerenteView,
+    AsistenciaEmpleadoView,
 )
 
 urlpatterns = [
@@ -27,4 +30,11 @@ urlpatterns = [
     # Vista de empleados
     path('empleados/', EmpleadosListCreateView.as_view(), name='empleados-list-create'),
     path('empleados/<int:id>/', EmpleadoDetailView.as_view(), name='empleado-detail'),
+    path('asistencias/mis-asistencias/', AsistenciaEmpleadoView.as_view(), name='asistencias_empleado'),
+
+
+    # Solicitudes
+    path('solicitudes/', SolicitudDiaEmpleadoView.as_view(), name='solicitudes-empleado'),
+    path('solicitudes-gerente/', SolicitudDiaGerenteView.as_view(), name='solicitudes-gerente'),
+    path('solicitudes-gerente/<int:pk>/', SolicitudDiaGerenteView.as_view(), name='solicitudes-aprobar-rechazar'),
 ]

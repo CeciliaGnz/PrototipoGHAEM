@@ -9,6 +9,9 @@ from .models import Asistencia
 from .serializers import AsistenciaSerializer
 from rest_framework import serializers
 from rest_framework import generics 
+from .models import SolicitudDia
+from .serializers import SolicitudDiaSerializer
+from collections import defaultdict
 
 
 from django.utils.timezone import localtime, now
@@ -121,6 +124,18 @@ class AsistenciasTodasView(APIView):
         asistencias = Asistencia.objects.exclude(usuario__rol='gerente').order_by('-fecha', '-hora')
         serializer = AsistenciaSerializer(asistencias, many=True)
         return Response(serializer.data)
+    
+
+#ASISTENCIA DE EMPLEADO PROPIA
+class AsistenciaEmpleadoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        usuario = request.user
+        asistencias = Asistencia.objects.filter(usuario=usuario).order_by('-fecha', '-hora')
+        serializer = AsistenciaSerializer(asistencias, many=True)
+        return Response(serializer.data)
+
 
 #EQUIPO
 class EmpleadosListView(generics.ListAPIView):
@@ -148,3 +163,45 @@ class EmpleadoDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return User.objects.exclude(rol='gerente')
+
+#SOLICITUDES DE DIAS # Crear y listar propias solicitudes
+class SolicitudDiaEmpleadoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        solicitudes = SolicitudDia.objects.filter(usuario=request.user).order_by('-creado_en')
+        serializer = SolicitudDiaSerializer(solicitudes, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        data = request.data.copy()
+        data['usuario'] = request.user.id
+        serializer = SolicitudDiaSerializer(data=data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save(usuario=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+# Ver y aprobar/rechazar (solo gerente)
+class SolicitudDiaGerenteView(APIView):
+    permission_classes = [IsAuthenticated, IsGerente]
+
+    def get(self, request):
+        solicitudes = SolicitudDia.objects.all().order_by('-creado_en')
+        serializer = SolicitudDiaSerializer(solicitudes, many=True)
+        return Response(serializer.data)
+
+    def patch(self, request, pk):
+        try:
+            solicitud = SolicitudDia.objects.get(pk=pk)
+        except SolicitudDia.DoesNotExist:
+            return Response({'error': 'Solicitud no encontrada'}, status=404)
+
+        nuevo_estado = request.data.get('estado')
+        if nuevo_estado not in ['aprobado', 'rechazado']:
+            return Response({'error': 'Estado inválido'}, status=400)
+
+        solicitud.estado = nuevo_estado
+        solicitud.save()
+        return Response({'mensaje': f'Solicitud {nuevo_estado} correctamente'})
+    
