@@ -33,6 +33,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     cedula = models.CharField(max_length=15, unique=True)
     nombre = models.CharField(max_length=100)
     rol = models.CharField(max_length=10, choices=ROLES, default='empleado')
+    hora_esperada_entrada = models.TimeField(null=True, blank=True)  # ⏰ Nuevo campo
+
     sucursales = models.ManyToManyField(Sucursal, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -61,3 +63,22 @@ class Asistencia(models.Model):
 
     def __str__(self):
         return f"{self.usuario.cedula} - {self.tipo} - {self.fecha} {self.hora}"
+    
+
+#MODEL DE SOLICITUDES
+ESTADOS = (
+    ('pendiente', 'En espera'),
+    ('aprobado', 'Aprobada'),
+    ('rechazado', 'Rechazada'),
+)
+
+class SolicitudDia(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    motivo = models.TextField()
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    estado = models.CharField(max_length=10, choices=ESTADOS, default='pendiente')
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.usuario.nombre} - {self.motivo} ({self.estado})"
