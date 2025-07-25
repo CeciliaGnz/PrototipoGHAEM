@@ -8,6 +8,11 @@ ROLES = (
     ('empleado', 'Empleado'),
 )
 
+class Sucursal(models.Model):
+    nombre = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.nombre
 class UserManager(BaseUserManager):
     def create_user(self, cedula, password=None, nombre=None, rol='empleado', **extra_fields):
         if not cedula:
@@ -28,6 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     cedula = models.CharField(max_length=15, unique=True)
     nombre = models.CharField(max_length=100)
     rol = models.CharField(max_length=10, choices=ROLES, default='empleado')
+    sucursales = models.ManyToManyField(Sucursal, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 

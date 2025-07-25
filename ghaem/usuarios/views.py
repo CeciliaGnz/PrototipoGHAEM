@@ -9,6 +9,9 @@ from .models import Asistencia
 from .serializers import AsistenciaSerializer
 from rest_framework import serializers
 from rest_framework import generics 
+from rest_framework import viewsets, permissions
+from .models import User, Sucursal
+from .serializers import UserSerializer, SucursalSerializer
 
 
 from django.utils.timezone import localtime, now
@@ -148,3 +151,15 @@ class EmpleadoDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return User.objects.exclude(rol='gerente')
+
+class SucursalViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Sucursal.objects.all()
+    serializer_class = SucursalSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+

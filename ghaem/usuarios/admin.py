@@ -4,6 +4,9 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .models import User, Asistencia
 
+from .models import Sucursal
+
+admin.site.register(Sucursal)
 # Formulario para crear usuarios desde el admin
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
@@ -26,6 +29,7 @@ class UserCreationForm(forms.ModelForm):
         return user
 
 # Admin de usuarios
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     add_form = UserCreationForm
@@ -33,20 +37,25 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ('rol', 'is_active')
     search_fields = ('cedula', 'nombre')
     ordering = ('cedula',)
-    filter_horizontal = ('groups', 'user_permissions')
+    filter_horizontal = ('groups', 'user_permissions', 'sucursales')  # <- agrega sucursales aquí también
 
     fieldsets = (
         (None, {'fields': ('cedula', 'password')}),
-        ('Información personal', {'fields': ['nombre']}),
+        ('Información personal', {'fields': ['nombre', 'sucursales']}),  # <--- Aquí
         ('Permisos', {'fields': ('rol', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('cedula', 'nombre', 'rol', 'password1', 'password2'),
+            'fields': ('cedula', 'nombre', 'rol', 'sucursales', 'password1', 'password2'),  # <--- Aquí
         }),
     )
+    
+    list_display = ('cedula', 'nombre', 'rol', 'mostrar_sucursales', 'is_active', 'is_staff')
+    def mostrar_sucursales(self, obj):
+        return ', '.join([s.nombre for s in obj.sucursales.all()])
+    mostrar_sucursales.short_description = 'Sucursales'
 
 # Admin de asistencias
 @admin.register(Asistencia)

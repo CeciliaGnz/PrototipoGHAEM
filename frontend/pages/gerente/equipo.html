@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
     <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
-    <link rel="icon" href="../../../assets/img/InicialLogo.png" type="image/x-icon">
+    <link
+      rel="icon"
+      href="../../../assets/img/InicialLogo.png"
+      type="image/x-icon"
+    />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -26,10 +30,15 @@
             <div class="card mt-4">
               <div class="card-header d-flex justify-content-between">
                 <h4>Mostrando empleados</h4>
-                <a href="#" class="btn btn-primary btn-round d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modalAgregarEmpleado">
-  <i class="fas fa-plus me-2"></i>
-  <span>Agregar empleado</span>
-</a>
+                <a
+                  href="#"
+                  class="btn btn-primary btn-round d-flex align-items-center"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalAgregarEmpleado"
+                >
+                  <i class="fas fa-plus me-2"></i>
+                  <span>Agregar empleado</span>
+                </a>
               </div>
               <div class="card-body">
                 <div class="row row-demo-grid"></div>
@@ -41,91 +50,194 @@
     </div>
 
     <!-- Modales -->
-   <!-- Modal Agregar -->
-<div class="modal fade" id="modalAgregarEmpleado" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content no-padding-modal">
-      <div class="card m-0">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="card-title m-0">Agregar nuevo empleado</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="card-body">
-          <form id="formNuevoEmpleado">
-            <div class="row">
-              <div class="col-md-6">
-                <label for="nombreApellido">Nombre y apellido</label>
-                <input type="text" class="form-control" id="nombreApellido" required />
-              </div>
-              <div class="col-md-6">
-                <label for="identificacion">Identificación</label>
-                <input type="text" class="form-control" id="identificacion" required />
-              </div>
-              <div class="col-md-6">
-                <label for="password">Contraseña inicial</label>
-                <input type="password" class="form-control" id="password" required />
-              </div>
-              <div class="col-md-6">
-                <label for="rol">Rol</label>
-                <select class="form-select" id="rol" required>
-                  <option value="" disabled selected>Seleccione un rol</option>
-                  <option value="encargado">Encargado</option>
-                  <option value="empleado">Empleado</option>
-                </select>
-              </div>
+    <!-- Modal Agregar -->
+    <div class="modal fade" id="modalAgregarEmpleado" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content no-padding-modal">
+          <div class="card m-0">
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+            >
+              <h5 class="card-title m-0">Agregar nuevo empleado</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
             </div>
-          </form>
-        </div>
-        <div class="card-action d-flex justify-content-end px-4 pb-4">
-          <button type="submit" form="formNuevoEmpleado" class="btn btn-success me-2">Agregar</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <div class="card-body">
+              <form id="formNuevoEmpleado">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="nombreApellido">Nombre y apellido</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nombreApellido"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="identificacion">Identificación</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="identificacion"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="password">Contraseña inicial</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="rol">Rol</label>
+                    <select class="form-select" id="rol" required>
+                      <option value="" disabled selected>
+                        Seleccione un rol
+                      </option>
+                      <option value="encargado">Encargado</option>
+                      <option value="empleado">Empleado</option>
+                    </select>
+                  </div>
+                  <!-- ... -->
+                  <!-- Selector para UNA sucursal (solo encargado, agregar) -->
+                  <div
+                    class="col-md-6"
+                    id="sucursalGroup"
+                    style="display: none"
+                  >
+                    <label for="sucursalSelect">Sucursal</label>
+                    <select class="form-select" id="sucursalSelect"></select>
+                  </div>
+                  <!-- Selector para VARIAS sucursales (solo empleado, agregar) -->
+                  <div
+                    class="col-md-6"
+                    id="multiSucursalGroup"
+                    style="display: none"
+                  >
+                    <label>Sucursales</label>
+                    <div id="multiSucursalCheckboxes"></div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="card-action d-flex justify-content-end px-4 pb-4">
+              <button
+                type="submit"
+                form="formNuevoEmpleado"
+                class="btn btn-success me-2"
+              >
+                Agregar
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-  <!-- Modal Editar -->
-<div class="modal fade" id="modalEditarEmpleado" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content no-padding-modal">
-      <div class="card m-0">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h5 class="card-title m-0">Editar empleado</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="card-body">
-          <form id="formEditarEmpleado">
-            <div class="row">
-              <div class="col-md-6">
-                <label for="editNombreApellido">Nombre y apellido</label>
-                <input type="text" class="form-control" id="editNombreApellido" disabled />
-              </div>
-              <div class="col-md-6">
-                <label for="editIdentificacion">Identificación</label>
-                <input type="text" class="form-control" id="editIdentificacion" disabled />
-              </div>
-              <div class="col-md-6">
-                <label for="editRol">Rol</label>
-                <select class="form-select" id="editRol" required>
-  <option value="" disabled>Seleccione un rol</option>
-  <option value="encargado">Encargado</option>
-  <option value="empleado">Empleado</option>
-</select>
-
-              </div>
+    <!-- Modal Editar -->
+    <div class="modal fade" id="modalEditarEmpleado" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content no-padding-modal">
+          <div class="card m-0">
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+            >
+              <h5 class="card-title m-0">Editar empleado</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
             </div>
-          </form>
-        </div>
-        <div class="card-action d-flex justify-content-end px-4 pb-4">
-          <button type="submit" form="formEditarEmpleado" class="btn btn-warning me-2">Actualizar</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <div class="card-body">
+              <form id="formEditarEmpleado">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="editNombreApellido">Nombre y apellido</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editNombreApellido"
+                      disabled
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editIdentificacion">Identificación</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editIdentificacion"
+                      disabled
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editRol">Rol</label>
+                    <select class="form-select" id="editRol" required>
+                      <option value="" disabled>Seleccione un rol</option>
+                      <option value="encargado">Encargado</option>
+                      <option value="empleado">Empleado</option>
+                    </select>
+                  </div>
+
+                  <!-- ... -->
+                  <!-- Selector para UNA sucursal (solo encargado, editar) -->
+                  <div
+                    class="col-md-6"
+                    id="editSucursalGroup"
+                    style="display: none"
+                  >
+                    <label for="editSucursalSelect">Sucursal</label>
+                    <select
+                      class="form-select"
+                      id="editSucursalSelect"
+                    ></select>
+                  </div>
+                  <!-- Selector para VARIAS sucursales (solo empleado, editar) -->
+                  <div
+                    class="col-md-6"
+                    id="editMultiSucursalGroup"
+                    style="display: none"
+                  >
+                    <label>Sucursales</label>
+                    <div id="editMultiSucursalCheckboxes"></div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="card-action d-flex justify-content-end px-4 pb-4">
+              <button
+                type="submit"
+                form="formEditarEmpleado"
+                class="btn btn-warning me-2"
+              >
+                Actualizar
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-
 
     <!-- Scripts -->
     <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
@@ -136,314 +248,461 @@
 
     <!-- JS de funcionalidad (traer empleados, CRUD) -->
     <script>
-      // Función para capitalizar texto
-        function capitalizar(texto) {
-          if (!texto) return "";
-          return texto.charAt(0).toUpperCase() + texto.slice(1);
-        }
+      let sucursalesCache = [];
 
-        // Cargar empleados (excepto gerentes)
-        function cargarEmpleados() {
-          const token = localStorage.getItem('token');
-          if (!token) {
-            console.error("No hay token de autenticación");
-            return;
-          }
+      function cargarSucursales(callback = null) {
+        const token = localStorage.getItem("token");
+        fetch("http://127.0.0.1:8000/api/usuarios/sucursales/", {
+          headers: token ? { Authorization: "Bearer " + token } : {},
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            sucursalesCache = data;
+            if (typeof callback === "function") callback();
+          });
+      }
 
-          fetch("http://127.0.0.1:8000/api/usuarios/empleados/", {
-            headers: {
-              Authorization: "Bearer " + token
-            }
-          })
-          .then(res => {
+      function capitalizar(texto) {
+        if (!texto) return "";
+        return texto.charAt(0).toUpperCase() + texto.slice(1);
+      }
+
+      function cargarEmpleados() {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        fetch("http://127.0.0.1:8000/api/usuarios/empleados/", {
+          headers: { Authorization: "Bearer " + token },
+        })
+          .then((res) => {
             if (!res.ok) throw new Error("Error al cargar empleados");
             return res.json();
           })
-          .then(empleados => {
-            // Filtrar para excluir gerentes
-            const empleadosNoGerente = empleados.filter(e => e.rol.toLowerCase() !== "gerente");
+          .then((empleados) => {
+            const empleadosNoGerente = empleados.filter(
+              (e) => e.rol.toLowerCase() !== "gerente"
+            );
 
             const contenedor = document.querySelector(".row-demo-grid");
             contenedor.innerHTML = "";
 
-            empleadosNoGerente.forEach(emp => {
+            empleadosNoGerente.forEach((emp) => {
               const card = document.createElement("div");
               card.className = "col-xl-4 mb-3";
               card.innerHTML = `
-                <div class="card">
-                  <div class="card-body text-center">
-                    <h5 class="fw-bold mb-1">${emp.nombre}</h5>
-                    <p class="mb-1 text-muted">Rol: ${capitalizar(emp.rol)}</p>
-                    <p class="mb-3 text-muted">Cédula: ${emp.cedula}</p>
-                    <div class="d-flex justify-content-center gap-2">
-                      <button class="btn btn-outline-warning btn-sm" onclick="abrirModalEditar(${emp.id}, '${emp.nombre}', '${emp.rol}', '${emp.cedula}')">
-                        <i class="fas fa-edit"></i>
-                      </button>
-                      <button class="btn btn-outline-danger btn-sm" onclick="eliminarEmpleado(${emp.id})">
-                        <i class="fas fa-trash-alt"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              `;
+  <div class="card">
+    <div class="card-body text-center">
+      <h5 class="fw-bold mb-1">${emp.nombre}</h5>
+      <p class="mb-1 text-muted">Rol: ${capitalizar(emp.rol)}</p>
+      <p class="mb-1 text-muted">Cédula: ${emp.cedula}</p>
+      <p class="mb-2 text-muted">
+        Sucursal: ${
+          emp.sucursal_nombres && emp.sucursal_nombres.length > 0
+            ? emp.sucursal_nombres.join(", ")
+            : "No asignada"
+        }
+      </p>
+      <div class="d-flex justify-content-center gap-2">
+        <button class="btn btn-outline-warning btn-sm" onclick="abrirModalEditar(
+          ${emp.id},
+          '${emp.nombre.replace(/'/g, "\\'")}',
+          '${emp.rol}',
+          '${emp.cedula}',
+          ${JSON.stringify(emp.sucursales || [])}
+        )">
+          <span>Editar</span>
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-outline-danger btn-sm" onclick="eliminarEmpleado(${
+          emp.id
+        })">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+`;
+
               contenedor.appendChild(card);
             });
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("Error en cargarEmpleados:", error);
           });
-        }
-
-        let nombreEditar = "";
-let cedulaEditar = "";
-
-        // Abrir modal de edición y llenar campos
-        function abrirModalEditar(id, nombre, rol, cedula) {
-          nombreEditar = nombre;
-          cedulaEditar = cedula;
-
-          document.getElementById("editNombreApellido").value = nombre;
-          document.getElementById("editIdentificacion").value = cedula;
-          document.getElementById("editRol").value = rol;
-
-          document.getElementById("formEditarEmpleado").dataset.id = id;
-
-          const modal = new bootstrap.Modal(document.getElementById("modalEditarEmpleado"));
-          modal.show();
-        }
-
-
-        // Editar empleado: enviar PUT con rol y sucursal
-       document.getElementById("formEditarEmpleado").addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  const id = e.target.dataset.id;
-  if (!id) {
-    alert("No se pudo identificar el empleado para editar.");
-    return;
-  }
-
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("No estás autenticado.");
-    return;
-  }
-
-  const nombre = document.getElementById("editNombreApellido").value || nombreEditar;
-  const cedula = document.getElementById("editIdentificacion").value || cedulaEditar;
-  const rol = document.getElementById("editRol").value;
-  console.log("Rol enviado:", rol);  // Para debug
-
-  fetch(`http://127.0.0.1:8000/api/usuarios/empleados/${id}/`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token
-    },
-    body: JSON.stringify({
-      nombre,
-      cedula,
-      rol
-    })
-  })
-  .then(res => {
-    if (!res.ok) {
-      return res.text().then(texto => {
-        console.error("Error respuesta backend:", texto);
-        throw new Error("Error al actualizar empleado: " + texto);
-      });
-    }
-    return res.json();
-  })
-  .then(() => {
-    bootstrap.Modal.getInstance(document.getElementById("modalEditarEmpleado")).hide();
-    cargarEmpleados();
-  })
-  .catch(error => {
-    alert(error.message);
-    console.error(error);
-  });
-});
-
-//AGREGAR NUEVO EMPLEADO
- document.getElementById("formNuevoEmpleado").addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("No estás autenticado.");
-      return;
-    }
-
-    const nombre = document.getElementById("nombreApellido").value.trim();
-    const cedula = document.getElementById("identificacion").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const rol = document.getElementById("rol").value;
-
-    const payload = { nombre, cedula, password, rol };
-
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/usuarios/empleados/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (response.ok) {
-        alert("Empleado creado correctamente");
-        bootstrap.Modal.getInstance(document.getElementById("modalAgregarEmpleado")).hide();
-        document.getElementById("formNuevoEmpleado").reset();
-        cargarEmpleados();
-      } else {
-        const data = await response.json();
-        alert("Error al crear empleado: " + JSON.stringify(data));
       }
-    } catch (error) {
-      alert("Error de red al crear empleado");
-      console.error(error);
-    }
-  });
 
+      let nombreEditar = "";
+      let cedulaEditar = "";
 
+      function abrirModalEditar(id, nombre, rol, cedula, sucursales = []) {
+        nombreEditar = nombre;
+        cedulaEditar = cedula;
 
+        // Convierte a IDs numéricos por seguridad
+        const sucursalesIDs = sucursales.map(Number);
 
-        // Eliminar empleado con confirmación
-        function eliminarEmpleado(id) {
-          if (!confirm("¿Estás seguro de eliminar este empleado?")) return;
+        document.getElementById("editNombreApellido").value = nombre;
+        document.getElementById("editIdentificacion").value = cedula;
+        document.getElementById("editRol").value = rol;
+
+        mostrarSelectSucursal(rol, "editar", sucursalesIDs);
+
+        document.getElementById("formEditarEmpleado").dataset.id = id;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalEditarEmpleado")
+        );
+        modal.show();
+      }
+
+      document
+        .getElementById("formEditarEmpleado")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const id = e.target.dataset.id;
+          if (!id) return;
 
           const token = localStorage.getItem("token");
-          if (!token) {
-            alert("No estás autenticado.");
-            return;
+          if (!token) return;
+
+          const nombre =
+            document.getElementById("editNombreApellido").value || nombreEditar;
+          const cedula =
+            document.getElementById("editIdentificacion").value || cedulaEditar;
+          const rol = document.getElementById("editRol").value;
+
+          let sucursales = [];
+          if (rol === "empleado") {
+            document
+              .querySelectorAll(
+                "#editMultiSucursalCheckboxes input[type='checkbox']:checked"
+              )
+              .forEach((cb) => {
+                sucursales.push(Number(cb.value));
+              });
+          } else if (rol === "encargado") {
+            const val = document.getElementById("editSucursalSelect").value;
+            if (val) sucursales = [Number(val)];
           }
 
+          const payload = { nombre, cedula, rol, sucursales };
+
           fetch(`http://127.0.0.1:8000/api/usuarios/empleados/${id}/`, {
-            method: "DELETE",
+            method: "PUT",
             headers: {
-              Authorization: "Bearer " + token
-            }
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify(payload),
           })
-          .then(res => {
+            .then((res) => {
+              if (!res.ok) {
+                return res.text().then((texto) => {
+                  throw new Error("Error al actualizar empleado: " + texto);
+                });
+              }
+              return res.json();
+            })
+            .then(() => {
+              bootstrap.Modal.getInstance(
+                document.getElementById("modalEditarEmpleado")
+              ).hide();
+              cargarEmpleados();
+            })
+            .catch((error) => {
+              alert(error.message);
+              console.error(error);
+            });
+        });
+
+      document
+        .getElementById("formNuevoEmpleado")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const token = localStorage.getItem("token");
+          if (!token) return;
+
+          const nombre = document.getElementById("nombreApellido").value.trim();
+          const cedula = document.getElementById("identificacion").value.trim();
+          const password = document.getElementById("password").value.trim();
+          const rol = document.getElementById("rol").value;
+
+          let sucursales = [];
+          if (rol === "empleado") {
+            document
+              .querySelectorAll(
+                "#multiSucursalCheckboxes input[type='checkbox']:checked"
+              )
+              .forEach((cb) => {
+                sucursales.push(Number(cb.value));
+              });
+          } else if (rol === "encargado") {
+            const val = document.getElementById("sucursalSelect").value;
+            if (val) sucursales = [Number(val)];
+          }
+
+          const payload = { nombre, cedula, password, rol, sucursales };
+
+          try {
+            const response = await fetch(
+              "http://127.0.0.1:8000/api/usuarios/empleados/",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: "Bearer " + token,
+                },
+                body: JSON.stringify(payload),
+              }
+            );
+
+            if (response.ok) {
+              alert("Empleado creado correctamente");
+              bootstrap.Modal.getInstance(
+                document.getElementById("modalAgregarEmpleado")
+              ).hide();
+              document.getElementById("formNuevoEmpleado").reset();
+              cargarEmpleados();
+            } else {
+              const data = await response.json();
+              alert("Error al crear empleado: " + JSON.stringify(data));
+            }
+          } catch (error) {
+            alert("Error de red al crear empleado");
+            console.error(error);
+          }
+        });
+
+      function eliminarEmpleado(id) {
+        if (!confirm("¿Estás seguro de eliminar este empleado?")) return;
+
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        fetch(`http://127.0.0.1:8000/api/usuarios/empleados/${id}/`, {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+          .then((res) => {
             if (!res.ok) throw new Error("Error al eliminar empleado");
             cargarEmpleados();
           })
-          .catch(error => {
+          .catch((error) => {
             alert("No se pudo eliminar el empleado");
             console.error(error);
           });
-        }
+      }
 
-        // Cargar header dinámico, sidebar y actualizar nombre/rol en header
-        function cargarComponentes() {
-          // Header
-          fetch("../componentes/header.html")
-            .then(res => res.text())
-            .then(data => {
-              document.getElementById("header-placeholder").innerHTML = data;
+      function cargarComponentes() {
+        fetch("../componentes/header.html")
+          .then((res) => res.text())
+          .then((data) => {
+            document.getElementById("header-placeholder").innerHTML = data;
 
-              const token = localStorage.getItem('token');
-              if (token) {
-                fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
-                  headers: {
-                    Authorization: "Bearer " + token
-                  }
-                })
-                .then(res => {
+            const token = localStorage.getItem("token");
+            if (token) {
+              fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+                headers: {
+                  Authorization: "Bearer " + token,
+                },
+              })
+                .then((res) => {
                   if (!res.ok) throw new Error("No autorizado");
                   return res.json();
                 })
-                .then(data => {
+                .then((data) => {
                   const nombreElem = document.getElementById("nombreUsuario");
                   const rolElem = document.getElementById("rolUsuario");
 
-                  if (nombreElem) nombreElem.textContent = data.nombre || "Usuario";
-                  if (rolElem) rolElem.textContent = capitalizar(data.rol || "Rol");
+                  if (nombreElem)
+                    nombreElem.textContent = data.nombre || "Usuario";
+                  if (rolElem)
+                    rolElem.textContent = capitalizar(data.rol || "Rol");
                 })
                 .catch(console.error);
-              }
+            }
 
-              const logoutBtn = document.getElementById("logoutBtn");
-              if (logoutBtn) {
-                logoutBtn.addEventListener("click", e => {
-                  e.preventDefault();
-                  localStorage.removeItem("token");
-                  window.location.href = "../../../index.html";
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (logoutBtn) {
+              logoutBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                localStorage.removeItem("token");
+                window.location.href = "../../../index.html";
+              });
+            }
+          });
+
+        fetch("../componentes/sidebarGerente.html")
+          .then((res) => res.text())
+          .then((data) => {
+            document.getElementById("sidebar-placeholder").innerHTML = data;
+
+            setTimeout(() => {
+              document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                  document.body.classList.toggle("sidebar_minimize");
                 });
-              }
-            });
+              });
 
-          // Sidebar
-          fetch("../componentes/sidebarGerente.html")
-            .then(res => res.text())
-            .then(data => {
-              document.getElementById("sidebar-placeholder").innerHTML = data;
-
-              setTimeout(() => {
-                // Toggle sidebar
-                document.querySelectorAll(".toggle-sidebar").forEach(btn => {
-                  btn.addEventListener("click", () => {
-                    document.body.classList.toggle("sidebar_minimize");
-                  });
-                });
-
-                // Cerrar sidebar en móvil al hacer clic en link
-                document.querySelectorAll(".sidebar-link").forEach(link => {
-                  link.addEventListener("click", () => {
-                    if (window.innerWidth < 992) {
-                      document.body.classList.remove("sidebar_minimize");
-                    }
-                  });
-                });
-
-                // Marcar activo en el sidebar según archivo actual
-                document.querySelectorAll(".nav-item").forEach(item => {
-                  item.classList.remove("active");
-                });
-                const path = window.location.pathname.split("/").pop();
-                document.querySelectorAll(".sidebar-link").forEach(link => {
-                  if (link.getAttribute("href") && link.getAttribute("href").includes(path)) {
-                    link.parentElement.classList.add("active");
+              document.querySelectorAll(".sidebar-link").forEach((link) => {
+                link.addEventListener("click", () => {
+                  if (window.innerWidth < 992) {
+                    document.body.classList.remove("sidebar_minimize");
                   }
                 });
-              }, 100);
-            });
+              });
+
+              document.querySelectorAll(".nav-item").forEach((item) => {
+                item.classList.remove("active");
+              });
+              const path = window.location.pathname.split("/").pop();
+              document.querySelectorAll(".sidebar-link").forEach((link) => {
+                if (
+                  link.getAttribute("href") &&
+                  link.getAttribute("href").includes(path)
+                ) {
+                  link.parentElement.classList.add("active");
+                }
+              });
+            }, 100);
+          });
+      }
+
+      function validarAcceso() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          window.location.href = "../../../index.html";
+          return;
         }
 
-        // Validar token y rol antes de cargar página
-        function validarAcceso() {
-          const token = localStorage.getItem('token');
-          if (!token) {
-            window.location.href = "../../../index.html"; // Redirigir al login si no hay token
-            return;
-          }
-
-          fetch('http://127.0.0.1:8000/api/usuarios/perfil/', {
-            headers: { Authorization: 'Bearer ' + token }
-          })
-          .then(r => {
+        fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+          headers: { Authorization: "Bearer " + token },
+        })
+          .then((r) => {
             if (!r.ok) throw new Error("No autorizado");
             return r.json();
           })
-          .then(data => {
+          .then((data) => {
             if (data.rol !== "gerente") {
-              window.location.href = "../../no-autorizado.html"; // Redirigir si no es gerente
+              window.location.href = "../../no-autorizado.html";
             }
           })
           .catch(() => {
-            window.location.href = "../../../index.html"; // Redirigir si error en token o perfil
+            window.location.href = "../../../index.html";
           });
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        cargarSucursales();
+        validarAcceso();
+        cargarComponentes();
+        cargarEmpleados();
+      });
+
+      // Mostrar selects/checkboxes sucursales según rol
+      function mostrarSelectSucursal(
+        rol,
+        modalTipo = "nuevo",
+        sucursalesUsuario = []
+      ) {
+        let sucursalGroup,
+          multiSucursalGroup,
+          sucursalSelect,
+          multiSucursalContainer;
+
+        if (modalTipo === "nuevo") {
+          sucursalGroup = document.getElementById("sucursalGroup");
+          multiSucursalGroup = document.getElementById("multiSucursalGroup");
+          sucursalSelect = document.getElementById("sucursalSelect");
+          multiSucursalContainer = document.getElementById(
+            "multiSucursalCheckboxes"
+          );
+        } else {
+          sucursalGroup = document.getElementById("editSucursalGroup");
+          multiSucursalGroup = document.getElementById(
+            "editMultiSucursalGroup"
+          );
+          sucursalSelect = document.getElementById("editSucursalSelect");
+          multiSucursalContainer = document.getElementById(
+            "editMultiSucursalCheckboxes"
+          );
         }
 
-        // Al cargar la página
-        window.addEventListener("DOMContentLoaded", () => {
-          validarAcceso();
-          cargarComponentes();
-          cargarEmpleados();
-        });
+        // Limpia los selects/checkboxes previos
+        if (sucursalSelect) sucursalSelect.innerHTML = "";
+        if (multiSucursalContainer) multiSucursalContainer.innerHTML = "";
 
-  </script>
+        // Convierte los valores de sucursalesUsuario a enteros (por si acaso)
+        sucursalesUsuario = sucursalesUsuario.map(Number);
+
+        if (rol === "encargado") {
+          sucursalGroup.style.display = "block";
+          multiSucursalGroup.style.display = "none";
+          sucursalSelect.innerHTML =
+            '<option value="" disabled selected>Seleccione una sucursal</option>';
+          sucursalesCache.forEach((suc) => {
+            sucursalSelect.innerHTML += `<option value="${suc.id}" ${
+              sucursalesUsuario.includes(suc.id) ? "selected" : ""
+            }>${suc.nombre}</option>`;
+          });
+        } else if (rol === "empleado") {
+          sucursalGroup.style.display = "none";
+          multiSucursalGroup.style.display = "block";
+          sucursalesCache.forEach((suc) => {
+            multiSucursalContainer.innerHTML += `
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" id="${modalTipo}MultiSucursal${
+              suc.id
+            }" value="${suc.id}" ${
+              sucursalesUsuario.includes(suc.id) ? "checked" : ""
+            }>
+          <label class="form-check-label" for="${modalTipo}MultiSucursal${
+              suc.id
+            }">${suc.nombre}</label>
+        </div>
+      `;
+          });
+        } else {
+          sucursalGroup.style.display = "none";
+          multiSucursalGroup.style.display = "none";
+        }
+      }
+
+      // Delegación para botón editar
+      document.addEventListener("click", function (e) {
+        if (e.target.closest(".btn-edit-empleado")) {
+          const btn = e.target.closest(".btn-edit-empleado");
+          const id = Number(btn.getAttribute("data-id"));
+          const nombre = btn.getAttribute("data-nombre");
+          const rol = btn.getAttribute("data-rol");
+          const cedula = btn.getAttribute("data-cedula");
+          let sucursales = [];
+          try {
+            sucursales = JSON.parse(
+              btn.getAttribute("data-sucursales") || "[]"
+            );
+          } catch (err) {
+            sucursales = [];
+          }
+          abrirModalEditar(id, nombre, rol, cedula, sucursales);
+        }
+      });
+
+      // Cambia los selects/checkboxes cuando cambia el rol en agregar/editar
+      document.getElementById("rol").addEventListener("change", function () {
+        mostrarSelectSucursal(this.value, "nuevo", []);
+      });
+      if (document.getElementById("editRol")) {
+        document
+          .getElementById("editRol")
+          .addEventListener("change", function () {
+            mostrarSelectSucursal(this.value, "editar", []);
+          });
+      }
+    </script>
   </body>
 </html>
