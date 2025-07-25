@@ -1,13 +1,5 @@
 from rest_framework import serializers
-from .models import Asistencia, User, Sucursal
-from rest_framework import serializers
-from .models import SolicitudDia
-=======
-from .models import Asistencia, User, Sucursal
-
-from rest_framework import serializers
-from .models import User, Sucursal
->>>>>>> 0c0f6f6 (Agregando manejo de sucursales)
+from .models import User, Asistencia, SolicitudDia, Sucursal
 
 class UserSerializer(serializers.ModelSerializer):
     sucursales = serializers.PrimaryKeyRelatedField(
@@ -17,11 +9,6 @@ class UserSerializer(serializers.ModelSerializer):
     )
     sucursal_nombres = serializers.SerializerMethodField()
 
-<<<<<<< HEAD
-=======
-# Para registro de usuarios
-class RegisterSerializer(serializers.ModelSerializer):
->>>>>>> bb75af2 (DASH CARDS POR TERMINAR, MUESTRA SOLO LOS EMPLEADOS EN PANTALLA GERENTE)
     class Meta:
         model = User
         fields = ['id', 'cedula', 'nombre', 'rol', 'sucursales', 'sucursal_nombres']
@@ -54,14 +41,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 class AsistenciaSerializer(serializers.ModelSerializer):
+    nombre = serializers.CharField(source='usuario.nombre', read_only=True)
+    rol = serializers.CharField(source='usuario.rol', read_only=True)
+
     class Meta:
         model = Asistencia
-        fields = ['id', 'usuario', 'fecha', 'hora', 'tipo']
+        fields = ['id', 'usuario', 'fecha', 'hora', 'tipo', 'nombre', 'rol']
         read_only_fields = ['usuario', 'fecha', 'hora']
 
-<<<<<<< HEAD
-
-#SOLICITUD DE DIAS
 class SolicitudDiaSerializer(serializers.ModelSerializer):
     nombre = serializers.CharField(source='usuario.nombre', read_only=True)
     rol = serializers.CharField(source='usuario.rol', read_only=True)

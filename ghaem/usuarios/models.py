@@ -13,6 +13,7 @@ class Sucursal(models.Model):
 
     def __str__(self):
         return self.nombre
+
 class UserManager(BaseUserManager):
     def create_user(self, cedula, password=None, nombre=None, rol='empleado', **extra_fields):
         if not cedula:
@@ -33,16 +34,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     cedula = models.CharField(max_length=15, unique=True)
     nombre = models.CharField(max_length=100)
     rol = models.CharField(max_length=10, choices=ROLES, default='empleado')
-<<<<<<< HEAD
     hora_esperada_entrada = models.TimeField(null=True, blank=True)  # ⏰ Nuevo campo
 
-<<<<<<< HEAD
-    sucursales = models.ManyToManyField(Sucursal, blank=True)
-=======
->>>>>>> bb75af2 (DASH CARDS POR TERMINAR, MUESTRA SOLO LOS EMPLEADOS EN PANTALLA GERENTE)
-=======
-    sucursales = models.ManyToManyField(Sucursal, blank=True)
->>>>>>> 0c0f6f6 (Agregando manejo de sucursales)
+    sucursales = models.ManyToManyField(Sucursal, blank=True)  # SOLO UNA VEZ
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -72,7 +67,7 @@ class Asistencia(models.Model):
         return f"{self.usuario.cedula} - {self.tipo} - {self.fecha} {self.hora}"
     
 
-#MODEL DE SOLICITUDES
+# MODEL DE SOLICITUDES
 ESTADOS = (
     ('pendiente', 'En espera'),
     ('aprobado', 'Aprobada'),

@@ -15,18 +15,18 @@ from rest_framework import serializers
 from rest_framework import generics 
 from .models import SolicitudDia
 from .serializers import SolicitudDiaSerializer
-<<<<<<< HEAD
+
 from collections import defaultdict
 from rest_framework import viewsets, permissions
 from .models import User, Sucursal
 from .serializers import UserSerializer, SucursalSerializer
-=======
+
 from datetime import timedelta
 from django.utils.timezone import localdate
 from django.db.models import F, ExpressionWrapper, TimeField
 from datetime import datetime, timedelta, time
 
->>>>>>> bb75af2 (DASH CARDS POR TERMINAR, MUESTRA SOLO LOS EMPLEADOS EN PANTALLA GERENTE)
+
 # Modelos y Serializers de tu app
 from .models import Asistencia, User, Sucursal, SolicitudDia
 from .serializers import (
