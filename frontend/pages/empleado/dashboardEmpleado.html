@@ -292,7 +292,8 @@ if (!token) {
     if (data.rol !== "empleado") {
       window.location.href = "../../no-autorizado.html";
     }
-    // Si es gerente, no hagas nada: ya puede ver la página
+    cargarAsistencias();
+    // Si es empleado, no hagas nada: ya puede ver la página
   })
   .catch(() => window.location.href = "../../../index.html");
 }
@@ -351,7 +352,6 @@ function cargarAsistencias() {
     console.error("Error cargando asistencias:", err);
   });
 }
-cargarAsistencias();
   </script>
   </body>
 </html>

@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'cedula', 'nombre', 'rol']
 
-# Para registro de usuarios si quieres (puedes omitir si solo haces login)
+# Para registro de usuarios
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

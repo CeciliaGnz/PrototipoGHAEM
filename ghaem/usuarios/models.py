@@ -28,6 +28,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     cedula = models.CharField(max_length=15, unique=True)
     nombre = models.CharField(max_length=100)
     rol = models.CharField(max_length=10, choices=ROLES, default='empleado')
+    hora_esperada_entrada = models.TimeField(null=True, blank=True)  # ⏰ Nuevo campo
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
