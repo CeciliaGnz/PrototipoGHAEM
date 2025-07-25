@@ -2,6 +2,12 @@ from rest_framework import serializers
 from .models import Asistencia, User, Sucursal
 from rest_framework import serializers
 from .models import SolicitudDia
+=======
+from .models import Asistencia, User, Sucursal
+
+from rest_framework import serializers
+from .models import User, Sucursal
+>>>>>>> 0c0f6f6 (Agregando manejo de sucursales)
 
 class UserSerializer(serializers.ModelSerializer):
     sucursales = serializers.PrimaryKeyRelatedField(
@@ -53,6 +59,7 @@ class AsistenciaSerializer(serializers.ModelSerializer):
         fields = ['id', 'usuario', 'fecha', 'hora', 'tipo']
         read_only_fields = ['usuario', 'fecha', 'hora']
 
+<<<<<<< HEAD
 
 #SOLICITUD DE DIAS
 class SolicitudDiaSerializer(serializers.ModelSerializer):

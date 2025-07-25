@@ -1,10 +1,14 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions
-from django.contrib.auth import authenticate
+from rest_framework import (
+    status, permissions, serializers, generics, viewsets
+)
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import authenticate
 from django.utils import timezone
+from django.utils.timezone import localtime, now, localdate
+from django.db import IntegrityError
 from .models import Asistencia
 from .serializers import AsistenciaSerializer
 from rest_framework import serializers
@@ -23,15 +27,17 @@ from django.db.models import F, ExpressionWrapper, TimeField
 from datetime import datetime, timedelta, time
 
 >>>>>>> bb75af2 (DASH CARDS POR TERMINAR, MUESTRA SOLO LOS EMPLEADOS EN PANTALLA GERENTE)
-
-
-from django.utils.timezone import localtime, now
-from django.db import IntegrityError
+# Modelos y Serializers de tu app
+from .models import Asistencia, User, Sucursal, SolicitudDia
+from .serializers import (
+    AsistenciaSerializer,
+    UserSerializer,
+    RegisterSerializer,
+    SucursalSerializer,
+    SolicitudDiaSerializer,
+)
 from .permissions import IsGerente, IsEncargado, IsEmpleado
 
-
-from .models import User
-from .serializers import UserSerializer, RegisterSerializer
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -83,13 +89,12 @@ class AsistenciaView(APIView):
         if tipo not in ['entrada', 'salida']:
             return Response({'error': 'Tipo inválido'}, status=400)
 
-        hoy = timezone.localtime().date()
+        hoy = now().date()
         usuario = request.user
 
         if tipo == 'salida':
             if not Asistencia.objects.filter(usuario=usuario, tipo='entrada', fecha=hoy).exists():
                 return Response({'error': 'No puedes marcar salida sin haber registrado la entrada primero.'}, status=400)
-
             if Asistencia.objects.filter(usuario=usuario, tipo='salida', fecha=hoy).exists():
                 return Response({'mensaje': 'Ya marcaste salida hoy'}, status=200)
 
@@ -100,7 +105,7 @@ class AsistenciaView(APIView):
         asistencia = Asistencia.objects.create(
             usuario=request.user,
             tipo=tipo,
-            hora=timezone.localtime().time()
+            hora=localtime().time()
         )
 
         serializer = AsistenciaSerializer(asistencia)
@@ -117,19 +122,9 @@ class AsistenciaView(APIView):
         return Response(serializer.data)
 
 
-#TODAS LAS ASISTENCIAS
-class AsistenciaSerializer(serializers.ModelSerializer):
-    nombre = serializers.CharField(source='usuario.nombre', read_only=True)
-    rol = serializers.CharField(source='usuario.rol', read_only=True)
-    hora = serializers.TimeField(format='%H:%M', read_only=True) 
-    class Meta:
-        model = Asistencia
-        fields = ['id', 'tipo', 'fecha', 'hora', 'nombre', 'rol']
-
-    
-    
+# TODAS LAS ASISTENCIAS
 class AsistenciasTodasView(APIView):
-    permission_classes = [IsAuthenticated,IsGerente]
+    permission_classes = [IsAuthenticated, IsGerente]
 
     def get(self, request):
         asistencias = Asistencia.objects.exclude(usuario__rol='gerente').order_by('-fecha', '-hora')
@@ -137,7 +132,7 @@ class AsistenciasTodasView(APIView):
         return Response(serializer.data)
     
 
-#ASISTENCIA DE EMPLEADO PROPIA
+# ASISTENCIA DE EMPLEADO PROPIA
 class AsistenciaEmpleadoView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -148,7 +143,7 @@ class AsistenciaEmpleadoView(APIView):
         return Response(serializer.data)
 
 
-#EQUIPO
+# EQUIPO
 class EmpleadosListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated, IsGerente]
     serializer_class = UserSerializer
@@ -174,6 +169,18 @@ class EmpleadoDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return User.objects.exclude(rol='gerente')
+
+class SucursalViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Sucursal.objects.all()
+    serializer_class = SucursalSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
 
 class SucursalViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Sucursal.objects.all()
@@ -230,8 +237,7 @@ class SolicitudDiaGerenteView(APIView):
         return Response({'mensaje': f'Solicitud {nuevo_estado} correctamente'})
     
 
-    #VIEWS DASHBOARD DEL GERENTE
-
+# VIEWS DASHBOARD DEL GERENTE
 class DashboardGerenteStatsView(APIView):
     permission_classes = [IsAuthenticated, IsGerente]
 

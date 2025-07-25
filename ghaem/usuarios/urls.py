@@ -31,6 +31,7 @@ urlpatterns = [
     path('dashboard/gerente/', DashboardGerenteApiView.as_view(), name='dashboard-gerente'),
     path('dashboard/encargado/', DashboardEncargadoApiView.as_view(), name='dashboard-encargado'),
     path('dashboard/empleado/', DashboardEmpleadoApiView.as_view(), name='dashboard-empleado'),
+<<<<<<< HEAD
     path('dashboard-gerente-stats/', DashboardGerenteStatsView.as_view(), name='dashboard-gerente-stats'),
     path('asistencia/', AsistenciaView.as_view(), name='asistencia'),
     path('asistencias-todas/', AsistenciasTodasView.as_view(), name='asistencias-todas'),
@@ -45,4 +46,8 @@ urlpatterns = [
     path('solicitudes/', SolicitudDiaEmpleadoView.as_view(), name='solicitudes-empleado'),
     path('solicitudes-gerente/', SolicitudDiaGerenteView.as_view(), name='solicitudes-gerente'),
     path('solicitudes-gerente/<int:pk>/', SolicitudDiaGerenteView.as_view(), name='solicitudes-aprobar-rechazar'),
+=======
+    path('asistencia/', AsistenciaView.as_view(), name='asistencia'),
+    path('asistencias-todas/', AsistenciasTodasView.as_view(), name='asistencias-todas'),
+>>>>>>> 0c0f6f6 (Agregando manejo de sucursales)
 ]
