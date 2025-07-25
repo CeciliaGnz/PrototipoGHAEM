@@ -35,7 +35,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     rol = models.CharField(max_length=10, choices=ROLES, default='empleado')
     hora_esperada_entrada = models.TimeField(null=True, blank=True)  # ⏰ Nuevo campo
 
+<<<<<<< HEAD
     sucursales = models.ManyToManyField(Sucursal, blank=True)
+=======
+>>>>>>> bb75af2 (DASH CARDS POR TERMINAR, MUESTRA SOLO LOS EMPLEADOS EN PANTALLA GERENTE)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 

@@ -11,10 +11,18 @@ from rest_framework import serializers
 from rest_framework import generics 
 from .models import SolicitudDia
 from .serializers import SolicitudDiaSerializer
+<<<<<<< HEAD
 from collections import defaultdict
 from rest_framework import viewsets, permissions
 from .models import User, Sucursal
 from .serializers import UserSerializer, SucursalSerializer
+=======
+from datetime import timedelta
+from django.utils.timezone import localdate
+from django.db.models import F, ExpressionWrapper, TimeField
+from datetime import datetime, timedelta, time
+
+>>>>>>> bb75af2 (DASH CARDS POR TERMINAR, MUESTRA SOLO LOS EMPLEADOS EN PANTALLA GERENTE)
 
 
 from django.utils.timezone import localtime, now
@@ -221,3 +229,34 @@ class SolicitudDiaGerenteView(APIView):
         solicitud.save()
         return Response({'mensaje': f'Solicitud {nuevo_estado} correctamente'})
     
+
+    #VIEWS DASHBOARD DEL GERENTE
+
+class DashboardGerenteStatsView(APIView):
+    permission_classes = [IsAuthenticated, IsGerente]
+
+    def get(self, request):
+        hoy = now().date()
+        empleados_total = User.objects.filter(rol='empleado').count()
+        entradas_hoy = Asistencia.objects.filter(tipo='entrada', fecha=hoy)
+        salidas_hoy = Asistencia.objects.filter(tipo='salida', fecha=hoy)
+        solicitudes_pendientes = SolicitudDia.objects.filter(estado='pendiente').count()
+
+        llegadas_tarde = 0
+        for asistencia in entradas_hoy:
+            usuario = asistencia.usuario
+            hora_esperada = usuario.hora_esperada_entrada  # asegúrate de que este campo existe
+            if hora_esperada:
+                tolerancia = (datetime.combine(hoy, hora_esperada) + timedelta(minutes=15)).time()
+                if asistencia.hora > tolerancia:
+                    llegadas_tarde += 1
+
+        data = {
+            'total_empleados': empleados_total,
+            'entradas_hoy': entradas_hoy.count(),
+            'salidas_hoy': salidas_hoy.count(),
+            'llegadas_tarde_hoy': llegadas_tarde,
+            'solicitudes_pendientes': solicitudes_pendientes,
+        }
+
+        return Response(data)

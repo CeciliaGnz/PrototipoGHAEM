@@ -11,6 +11,11 @@ class UserSerializer(serializers.ModelSerializer):
     )
     sucursal_nombres = serializers.SerializerMethodField()
 
+<<<<<<< HEAD
+=======
+# Para registro de usuarios
+class RegisterSerializer(serializers.ModelSerializer):
+>>>>>>> bb75af2 (DASH CARDS POR TERMINAR, MUESTRA SOLO LOS EMPLEADOS EN PANTALLA GERENTE)
     class Meta:
         model = User
         fields = ['id', 'cedula', 'nombre', 'rol', 'sucursales', 'sucursal_nombres']
