@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Encargado – Crear Horario</title>
+    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
+    <link
+      rel="icon"
+      href="../../../assets/img/InicialLogo.png"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <style>
+      #dias-header-row {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 0.7rem 0;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+      }
+      #dias-header-row > div {
+        color: #0d6efd;
+        font-size: 1rem;
+        text-align: left;
+        flex: 1 1 0;
+        padding-left: 18px;
+      }
+      .horario-pill {
+        display: inline-block;
+        background: #f5f6fa;
+        border-radius: 1rem;
+        padding: 1px 8px 1px 7px;
+        margin-right: 5px;
+        margin-top: 2px;
+        font-size: 0.95rem;
+        color: #23272f;
+        font-weight: 500;
+        line-height: 1.5;
+        vertical-align: middle;
+      }
+      .horario-pill .horario-sucursal {
+        font-weight: 600;
+        color: #23272f;
+        margin-right: 2px;
+        font-size: 0.97em;
+      }
+      .horario-pill .horario-horas {
+        color: #2263e4;
+        font-weight: 400;
+        font-size: 0.97em;
+        margin-left: 1px;
+        text-decoration: none;
+      }
+      @media (max-width: 900px) {
+        #dias-header-row {
+          font-size: 0.97rem;
+          flex-wrap: wrap;
+        }
+        #dias-header-row > div {
+          min-width: 130px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="main-panel">
+        <div id="header-placeholder"></div>
+        <div id="sidebar-placeholder"></div>
+        <div class="container">
+          <div class="page-inner">
+            <div class="card mt-3">
+              <div class="card-header">
+                <h4>Creación de nuevo horario</h4>
+              </div>
+              <div class="card-body">
+                <form id="formHorario">
+                  <div class="form-group mb-4">
+                    <label>Horario de la semana para: </label>
+                    <select class="form-control" id="empleadoSelect" required>
+                      <option value="">Seleccione un empleado</option>
+                    </select>
+                  </div>
+                  <div id="dias-container"></div>
+                  <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                      Guardar horario
+                    </button>
+                    <button
+                      type="reset"
+                      class="btn btn-secondary"
+                      id="btnLimpiar"
+                    >
+                      Limpiar
+                    </button>
+                  </div>
+                </form>
+                <div id="msgBox" class="mt-3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
+    <script src="../../../assets/js/core/popper.min.js"></script>
+    <script src="../../../assets/js/core/bootstrap.min.js"></script>
+    <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../../../assets/js/kaiadmin.min.js"></script>
+
+    <!-- HEADER & SIDEBAR & ACCESO -->
+    <script>
+      fetch("../componentes/header.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("header-placeholder").innerHTML = data;
+          const token = localStorage.getItem("token");
+          if (token) {
+            fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+              headers: { Authorization: "Bearer " + token },
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                const nombreElem = document.getElementById("nombreUsuario");
+                const rolElem = document.getElementById("rolUsuario");
+                if (nombreElem)
+                  nombreElem.textContent = data.nombre || "Usuario";
+                if (rolElem)
+                  rolElem.textContent = capitalizar(data.rol || "Rol");
+              });
+          }
+          const logoutBtn = document.getElementById("logoutBtn");
+          if (logoutBtn) {
+            logoutBtn.addEventListener("click", function (e) {
+              e.preventDefault();
+              localStorage.removeItem("token");
+              window.location.href = "../../../index.html";
+            });
+          }
+        });
+      function capitalizar(texto) {
+        return texto.charAt(0).toUpperCase() + texto.slice(1);
+      }
+      fetch("../componentes/sidebar.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("sidebar-placeholder").innerHTML = data;
+          setTimeout(() => {
+            document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                document.body.classList.toggle("sidebar_minimize");
+              });
+            });
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              link.addEventListener("click", () => {
+                if (window.innerWidth < 992) {
+                  document.body.classList.remove("sidebar_minimize");
+                }
+              });
+            });
+            document.querySelectorAll(".nav-item").forEach((item) => {
+              item.classList.remove("active");
+            });
+            const path = window.location.pathname.split("/").pop();
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              if (
+                link.getAttribute("href") &&
+                link.getAttribute("href").includes(path)
+              ) {
+                link.parentElement.classList.add("active");
+              }
+            });
+          }, 100);
+        });
+
+      // Acceso solo encargado
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "../../../index.html";
+      } else {
+        fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+          headers: { Authorization: "Bearer " + token },
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.rol !== "encargado") {
+              window.location.href = "../../no-autorizado.html";
+            }
+          })
+          .catch(() => (window.location.href = "../../../index.html"));
+      }
+    </script>
+
+    <script>
+      const dias = [
+        { value: "lunes", label: "Lunes" },
+        { value: "martes", label: "Martes" },
+        { value: "miercoles", label: "Miércoles" },
+        { value: "jueves", label: "Jueves" },
+        { value: "viernes", label: "Viernes" },
+        { value: "sabado", label: "Sábado" },
+      ];
+      let empleadosData = [];
+      let sucursalesData = [];
+
+      function timeTo12Hour(timeStr) {
+        if (!timeStr) return "--:-- ----";
+        let [hour, min] = timeStr.split(":");
+        hour = parseInt(hour, 10);
+        const meridian = hour >= 12 ? "p.m." : "a.m.";
+        hour = hour % 12;
+        if (hour === 0) hour = 12;
+        return `${hour.toString().padStart(2, "0")}:${min} ${meridian}`;
+      }
+
+      async function obtenerBloquesPorDia(empleadoId) {
+        const token = localStorage.getItem("token");
+        const url = `http://127.0.0.1:8000/api/horarios/horarios/?empleado=${empleadoId}`;
+        const res = await fetch(url, {
+          headers: { Authorization: "Bearer " + token },
+        });
+        if (!res.ok) return {};
+        const horarios = await res.json();
+        const bloques = {};
+        horarios.forEach((h) => {
+          if (!bloques[h.dia]) bloques[h.dia] = [];
+          bloques[h.dia].push(h);
+        });
+        return bloques;
+      }
+
+      async function cargarEmpleadosYSucursales() {
+        const token = localStorage.getItem("token");
+        const empRes = await fetch(
+          "http://127.0.0.1:8000/api/usuarios/empleados/",
+          { headers: { Authorization: "Bearer " + token } }
+        );
+        empleadosData = await empRes.json();
+        const sucRes = await fetch(
+          "http://127.0.0.1:8000/api/usuarios/sucursales/",
+          { headers: { Authorization: "Bearer " + token } }
+        );
+        sucursalesData = await sucRes.json();
+
+        const select = document.getElementById("empleadoSelect");
+        select.innerHTML = `<option value="">Seleccione un empleado</option>`;
+        empleadosData.forEach((emp) => {
+          select.innerHTML += `<option value="${emp.id}" data-multi="${
+            emp.sucursales.length > 1
+          }">${emp.nombre}</option>`;
+        });
+      }
+
+      async function renderDiasInputs(
+        multiSucursal,
+        sucursalesEmpleado,
+        empleadoId
+      ) {
+        const container = document.getElementById("dias-container");
+        container.innerHTML = `
+    <div id="dias-header-row" class="mb-0">
+      <div>Día</div>
+      <div>Hora de entrada</div>
+      <div>Hora de salida</div>
+      <div>Sucursal</div>
+    </div>
+  `;
+
+        let bloquesPorDia = {};
+        if (empleadoId) {
+          bloquesPorDia = await obtenerBloquesPorDia(empleadoId);
+        }
+
+        dias.forEach((dia) => {
+          const bloques = bloquesPorDia[dia.value] || [];
+          const ocupado = bloques.length > 0;
+          const bloque = bloques[0] || null;
+          let pill = "";
+          if (bloque) {
+            pill = `
+        <div style="margin-bottom:2px">
+          <span class="horario-pill">
+            <span class="horario-sucursal"><b>${
+              bloque.sucursal_nombre
+            }</b></span>
+            <span class="horario-horas">(${timeTo12Hour(
+              bloque.hora_entrada
+            )}–${timeTo12Hour(bloque.hora_salida)})</span>
+          </span>
+        </div>
+      `;
+          }
+
+          let sucursalInput = "";
+          if (!ocupado) {
+            if (multiSucursal) {
+              sucursalInput = `
+          <select class="form-control sucursal-select" name="sucursal_${
+            dia.value
+          }">
+            ${sucursalesEmpleado
+              .map((suc) => `<option value="${suc.id}">${suc.nombre}</option>`)
+              .join("")}
+          </select>
+        `;
+            } else {
+              sucursalInput = sucursalesEmpleado.length
+                ? `<input class="form-control" value="${sucursalesEmpleado[0].nombre}" disabled>`
+                : `<span class="text-danger">Sin sucursal asignada</span>`;
+            }
+          } else {
+            // Mostrar solo la sucursal donde ya tiene el horario
+            sucursalInput = `<input class="form-control" value="${bloque.sucursal_nombre}" disabled>`;
+          }
+
+          container.innerHTML += `
+      <div class="row mb-2 align-items-center">
+        <div class="col-md-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="${
+              dia.value
+            }" name="dias" value="${dia.value}"
+              ${ocupado ? "disabled" : ""} ${
+            ocupado ? 'title="Ya tiene horario asignado"' : ""
+          }>
+            <label class="form-check-label ${
+              ocupado ? "text-secondary" : ""
+            }" for="${dia.value}">
+              ${
+                ocupado
+                  ? `<i class="fa fa-lock"></i> <b>${dia.label}</b>`
+                  : `<b>${dia.label}</b>`
+              }
+            </label>
+            ${pill}
+          </div>
+        </div>
+        <div class="col-md-3">
+          <input type="time" class="form-control" name="entrada_${
+            dia.value
+          }" placeholder="Entrada"
+            ${ocupado ? "disabled" : ""} value="">
+        </div>
+        <div class="col-md-3">
+          <input type="time" class="form-control" name="salida_${
+            dia.value
+          }" placeholder="Salida"
+            ${ocupado ? "disabled" : ""} value="">
+        </div>
+        <div class="col-md-3">
+          ${sucursalInput}
+        </div>
+      </div>
+    `;
+        });
+      }
+
+      function hayTraslape(nuevoInicio, nuevoFin, bloquesExistentes) {
+        for (const bloque of bloquesExistentes) {
+          if (
+            nuevoInicio < bloque.hora_salida &&
+            nuevoFin > bloque.hora_entrada
+          ) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      document
+        .getElementById("empleadoSelect")
+        .addEventListener("change", async function () {
+          const empId = this.value;
+          const empleado = empleadosData.find((e) => e.id == empId);
+          if (!empleado) {
+            document.getElementById("dias-container").innerHTML = "";
+            return;
+          }
+
+          const multiSucursal = empleado.sucursales.length > 1;
+          const sucursalesEmpleado = empleado.sucursales.map((sucId) => {
+            const suc = sucursalesData.find((s) => s.id === sucId);
+            return suc || { id: sucId, nombre: "Sucursal" };
+          });
+
+          await renderDiasInputs(multiSucursal, sucursalesEmpleado, empId);
+        });
+
+      document
+        .getElementById("formHorario")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const empleadoId = document.getElementById("empleadoSelect").value;
+          if (!empleadoId) return alert("Selecciona un empleado.");
+
+          const empleado = empleadosData.find((e) => e.id == empleadoId);
+          const multiSucursal = empleado.sucursales.length > 1;
+          const sucursalesEmpleado = empleado.sucursales.map((sucId) => {
+            const suc = sucursalesData.find((s) => s.id === sucId);
+            return suc || { id: sucId, nombre: "Sucursal" };
+          });
+
+          let errores = [];
+          let traslapes = [];
+          let diasSeleccionados = Array.from(
+            document.querySelectorAll('input[name="dias"]:checked')
+          );
+          if (diasSeleccionados.length === 0) {
+            return alert("Selecciona al menos un día.");
+          }
+
+          const bloquesPorDia = await obtenerBloquesPorDia(empleadoId);
+
+          for (const diaChk of diasSeleccionados) {
+            const dia = diaChk.value;
+            const entrada = document.querySelector(
+              `[name="entrada_${dia}"]`
+            ).value;
+            const salida = document.querySelector(
+              `[name="salida_${dia}"]`
+            ).value;
+
+            let sucursalId;
+            if (multiSucursal) {
+              const sucSelect = document.querySelector(
+                `[name="sucursal_${dia}"]`
+              );
+              sucursalId = sucSelect ? sucSelect.value : "";
+            } else {
+              sucursalId = sucursalesEmpleado[0]?.id;
+            }
+
+            if (!entrada || !salida || !sucursalId) {
+              errores.push(dia);
+              continue;
+            }
+
+            const bloques = (bloquesPorDia[dia] || []).filter(
+              (b) => b.sucursal != sucursalId
+            );
+            // validación de traslape solo si no es bloque en la misma sucursal
+            let entradaCompleta =
+              entrada.length === 5 ? entrada + ":00" : entrada;
+            let salidaCompleta = salida.length === 5 ? salida + ":00" : salida;
+            if (hayTraslape(entradaCompleta, salidaCompleta, bloques)) {
+              traslapes.push(dia);
+              continue;
+            }
+
+            await fetch("http://127.0.0.1:8000/api/horarios/horarios/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("token"),
+              },
+              body: JSON.stringify({
+                empleado: empleadoId,
+                sucursal: sucursalId,
+                dia,
+                hora_entrada: entrada,
+                hora_salida: salida,
+              }),
+            });
+          }
+
+          if (errores.length) {
+            alert("Faltan datos en: " + errores.join(", "));
+          } else if (traslapes.length) {
+            alert(
+              "No se puede registrar el horario en: " +
+                traslapes.join(", ") +
+                ". Hay traslape con bloques existentes."
+            );
+          } else {
+            alert("¡Horarios guardados correctamente!");
+            this.reset();
+            // Refresca para ver los nuevos pills
+            const empId = document.getElementById("empleadoSelect").value;
+            const empleado = empleadosData.find((e) => e.id == empId);
+            if (empleado) {
+              const multiSucursal = empleado.sucursales.length > 1;
+              const sucursalesEmpleado = empleado.sucursales.map((sucId) => {
+                const suc = sucursalesData.find((s) => s.id === sucId);
+                return suc || { id: sucId, nombre: "Sucursal" };
+              });
+              renderDiasInputs(multiSucursal, sucursalesEmpleado, empId);
+            }
+          }
+        });
+
+      document
+        .getElementById("formHorario")
+        .addEventListener("reset", function (e) {
+          setTimeout(() => {
+            document.getElementById("dias-container").innerHTML = "";
+            const empId = document.getElementById("empleadoSelect").value;
+            const empleado = empleadosData.find((e) => e.id == empId);
+            if (empleado) {
+              const multiSucursal = empleado.sucursales.length > 1;
+              const sucursalesEmpleado = empleado.sucursales.map((sucId) => {
+                const suc = sucursalesData.find((s) => s.id === sucId);
+                return suc || { id: sucId, nombre: "Sucursal" };
+              });
+              renderDiasInputs(multiSucursal, sucursalesEmpleado, empId);
+            }
+          }, 100);
+        });
+
+      window.addEventListener("DOMContentLoaded", async () => {
+        await cargarEmpleadosYSucursales();
+        document
+          .getElementById("empleadoSelect")
+          .dispatchEvent(new Event("change"));
+      });
+    </script>
+  </body>
+</html>

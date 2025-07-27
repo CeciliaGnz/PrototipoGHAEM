@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Horarios - Gerente</title>
+    <!-- Estilos KaiAdmin -->
+    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
+    <link
+      rel="icon"
+      href="../../../assets/img/InicialLogo.png"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+  </head>
+  <body class="sidebar-mini">
+    <div class="wrapper">
+      <div class="main-panel">
+        <!--Componentes de header y sidebar-->
+        <div id="header-placeholder"></div>
+        <div id="sidebar-placeholder"></div>
+
+        <div class="container">
+          <div class="page-inner">
+            <div class="card mt-4">
+              <div class="card-header">
+                <h4>Horario de la semana (18‑24 may.)</h4>
+              </div>
+              <div class="card-body">
+                <!-- Sucursal -->
+                <div class="col-md-3">
+                  <label>Consultar horario por sucursal:</label>
+                  <select class="form-select">
+                    <option selected>Todas</option>
+                    <option>Sucursal A</option>
+                    <option>Sucursal B</option>
+                  </select>
+                </div>
+
+                <div class="table-responsive mt-4">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Lunes</th>
+                        <th>Martes</th>
+                        <th>Miércoles</th>
+                        <th>Jueves</th>
+                        <th>Viernes</th>
+                        <th>Sábado</th>
+                        <th>Domingo</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">Cecilia González</th>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>Libre</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Julia Martínez</th>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>Libre</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                        <td>10:00 a.m - 7:00 p.m</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts KaiAdmin -->
+    <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
+    <script src="../../../assets/js/core/popper.min.js"></script>
+    <script src="../../../assets/js/core/bootstrap.min.js"></script>
+    <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../../../assets/js/kaiadmin.min.js"></script>
+
+    <!-- Cargar componentes y activar hamburguesa -->
+    <script>
+      // Cargar header
+      fetch("../componentes/header.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("header-placeholder").innerHTML = data;
+
+          // Actualizar nombre y rol aquí, después de que el header esté insertado
+          const token = localStorage.getItem('token');
+          if (token) {
+            fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+              headers: {
+                Authorization: "Bearer " + token
+              }
+            })
+            .then(res => {
+              if (!res.ok) throw new Error("No autorizado");
+              return res.json();
+            })
+            .then(data => {
+              const nombreElem = document.getElementById("nombreUsuario");
+              const rolElem = document.getElementById("rolUsuario");
+
+              if (nombreElem) nombreElem.textContent = data.nombre || "Usuario";
+              if (rolElem) rolElem.textContent = capitalizar(data.rol || "Rol");
+            })
+            .catch(console.error);
+          }
+
+          // logout aquí
+          const logoutBtn = document.getElementById("logoutBtn");
+          if (logoutBtn) {
+            logoutBtn.addEventListener("click", function(e) {
+              e.preventDefault();
+              localStorage.removeItem("token");
+              window.location.href = "../../../index.html";
+            });
+          }
+        });
+
+      function capitalizar(texto) {
+        return texto.charAt(0).toUpperCase() + texto.slice(1);
+      }
+
+      // Cargar sidebar
+      fetch("../componentes/sidebarGerente.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("sidebar-placeholder").innerHTML = data;
+          setTimeout(() => {
+            document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                document.body.classList.toggle("sidebar_minimize");
+              });
+            });
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              link.addEventListener("click", () => {
+                if (window.innerWidth < 992) {
+                  document.body.classList.remove("sidebar_minimize");
+                }
+              });
+            });
+            document.querySelectorAll(".nav-item").forEach((item) => {
+              item.classList.remove("active");
+            });
+            const path = window.location.pathname.split("/").pop();
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              if (
+                link.getAttribute("href") &&
+                link.getAttribute("href").includes(path)
+              ) {
+                link.parentElement.classList.add("active");
+              }
+            });
+          }, 100);
+        });
+    </script>
+
+    <script>
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "../../../index.html"; // O la ruta real a tu login
+      } else {
+        fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+          headers: { Authorization: "Bearer " + token },
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            console.log("Perfil:", data); // <-- Mira el valor aquí en consola
+            if (data.rol !== "gerente") {
+              window.location.href = "../../no-autorizado.html";
+            }
+            // Si es gerente, no hagas nada: ya puede ver la página
+          })
+          .catch(() => (window.location.href = "../../../index.html"));
+      }
+    </script>
+  </body>
+</html>

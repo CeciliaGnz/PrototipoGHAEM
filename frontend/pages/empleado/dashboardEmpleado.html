@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - Empleado</title>
+    <!-- Estilos KaiAdmin -->
+    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="icon" href="../../../assets/img/InicialLogo.png" type="image/x-icon">
+    <style>
+      .dashboard-card {
+        border-radius: 0.5rem;
+        padding: 1rem 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+        background: #fff;
+        transition: box-shadow 0.3s ease;
+        cursor: default;
+        height: 90px; /* altura uniforme */
+      }
+      .dashboard-card:hover {
+        box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+      }
+      .dashboard-icon {
+        font-size: 2.2rem;
+        padding: 0.6rem;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
+      }
+      .text-success .dashboard-icon {
+        background-color: #198754;
+      }
+      .text-warning .dashboard-icon {
+        background-color: #ffc107;
+        color: #212529;
+      }
+      .text-primary .dashboard-icon {
+        background-color: #0d6efd;
+      }
+      .text-danger .dashboard-icon {
+        background-color: #dc3545;
+      }
+      .dashboard-info {
+        display: flex;
+        flex-direction: column;
+      }
+      .dashboard-info small {
+        font-weight: 600;
+        color: #666;
+      }
+      .dashboard-info .value {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body class="sidebar-mini">
+    <div class="wrapper">
+      <div class="main-panel">
+        <!--Componentes de header y sidebar-->
+        <div id="header-placeholder"></div>
+        <div id="sidebar-placeholder"></div>
+
+        <div class="container">
+          <div class="page-inner">
+            <div class="card mt-4">
+              <div class="card-header">
+                <h4>Dashboard de mi asistencia</h4>
+              </div>
+              <div class="card-body">
+                <!-- Cuadros dashboard con Bootstrap grid -->
+                <div class="row g-3 text-center">
+                  <div class="col-6 col-md-3">
+                    <div class="dashboard-card text-success">
+                      <div class="dashboard-icon">
+                        <i class="fas fa-users"></i>
+                      </div>
+                      <div class="dashboard-info">
+                        <small>Total de asistencias</small>
+                        <div class="value">5</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-6 col-md-3">
+                    <div class="dashboard-card text-warning">
+                      <div class="dashboard-icon">
+                        <i class="fas fa-clock"></i>
+                      </div>
+                      <div class="dashboard-info">
+                        <small>Total de tardanzas</small>
+                        <div class="value">1</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-6 col-md-3">
+                    <div class="dashboard-card text-primary">
+                      <div class="dashboard-icon">
+                        <i class="fas fa-check-circle"></i>
+                      </div>
+                      <div class="dashboard-info">
+                        <small>Total de asistencia a tiempo</small>
+                        <div class="value">1</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-6 col-md-3">
+                    <div class="dashboard-card text-danger">
+                      <div class="dashboard-icon">
+                        <i class="fas fa-user-slash"></i>
+                      </div>
+                      <div class="dashboard-info">
+                        <small>Total de ausencias</small>
+                        <div class="value">1</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Fin cuadros dashboard -->
+              </div>
+            </div>
+
+            <div class="card mt-4">
+              <div class="card-header">
+                <h5>Detalles de mi asistencia</h5>
+              </div>
+              <div class="card-body">
+                <!-- Filtros -->
+                <div class="row mt-2 mb-4 align-items-end">
+                  <!-- Rango de fecha -->
+                  <div class="col-md-5">
+                    <label>Rango de fecha:</label>
+                    <div class="d-flex gap-2">
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        <input type="date" class="form-control" value="2024-06-10" />
+                      </div>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        <input type="date" class="form-control" value="2024-06-10" />
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <!-- Total asistencia -->
+                  <div class="col-md-4 text-end">
+                    <label>Total de asistencia:</label>
+                    <h5 class="mb-0">2</h5>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>S.No</th>
+                        <th>Nombre</th>
+                        <th>Rol</th>
+                        <th>Fecha</th>
+                        <th>Hora de entrada</th>
+                        <th>Hora de salida</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!--contenido-->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts KaiAdmin -->
+    <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
+    <script src="../../../assets/js/core/popper.min.js"></script>
+    <script src="../../../assets/js/core/bootstrap.min.js"></script>
+    <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../../../assets/js/kaiadmin.min.js"></script>
+
+    <!-- Cargar componentes header y sidebar -->
+    <script>
+      // Cargar header
+      fetch("../componentes/header.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("header-placeholder").innerHTML = data;
+
+          // Actualizar nombre y rol aquí, después de que el header esté insertado
+          const token = localStorage.getItem('token');
+          if (token) {
+            fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+              headers: {
+                Authorization: "Bearer " + token
+              }
+            })
+            .then(res => {
+              if (!res.ok) throw new Error("No autorizado");
+              return res.json();
+            })
+            .then(data => {
+              const nombreElem = document.getElementById("nombreUsuario");
+              const rolElem = document.getElementById("rolUsuario");
+
+              if (nombreElem) nombreElem.textContent = data.nombre || "Usuario";
+              if (rolElem) rolElem.textContent = capitalizar(data.rol || "Rol");
+            })
+            .catch(console.error);
+          }
+
+          // logout aquí
+          const logoutBtn = document.getElementById("logoutBtn");
+          if (logoutBtn) {
+            logoutBtn.addEventListener("click", function(e) {
+              e.preventDefault();
+              localStorage.removeItem("token");
+              window.location.href = "../../../index.html";
+            });
+          }
+        });
+
+      function capitalizar(texto) {
+        return texto.charAt(0).toUpperCase() + texto.slice(1);
+      }
+    
+      // Cargar sidebar
+      fetch("../componentes/sidebarEmpleado.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("sidebar-placeholder").innerHTML = data;
+          setTimeout(() => {
+            document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                document.body.classList.toggle("sidebar_minimize");
+              });
+            });
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              link.addEventListener("click", () => {
+                if (window.innerWidth < 992) {
+                  document.body.classList.remove("sidebar_minimize");
+                }
+              });
+            });
+            document.querySelectorAll(".nav-item").forEach((item) => {
+              item.classList.remove("active");
+            });
+            const path = window.location.pathname.split("/").pop();
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              if (
+                link.getAttribute("href") &&
+                link.getAttribute("href").includes(path)
+              ) {
+                link.parentElement.classList.add("active");
+              }
+            });
+          }, 100);
+        });
+    </script>
+    
+
+<script>
+const token = localStorage.getItem('token');
+if (!token) {
+  window.location.href = "../../../index.html"; // O la ruta real a tu login
+} else {
+  fetch('http://127.0.0.1:8000/api/usuarios/perfil/', {
+    headers: { Authorization: 'Bearer ' + token }
+  })
+  .then(r => r.json())
+  .then(data => {
+    console.log('Perfil:', data);  // <-- Mira el valor aquí en consola
+    if (data.rol !== "empleado") {
+      window.location.href = "../../no-autorizado.html";
+    }
+    cargarAsistencias();
+    // Si es empleado, no hagas nada: ya puede ver la página
+  })
+  .catch(() => window.location.href = "../../../index.html");
+}
+
+
+function cargarAsistencias() {
+  const token = localStorage.getItem('token');
+  fetch("http://127.0.0.1:8000/api/usuarios/asistencias/mis-asistencias/", {
+    headers: {
+      Authorization: "Bearer " + token
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    const tbody = document.querySelector("table tbody");
+    tbody.innerHTML = "";
+
+    const registrosAgrupados = {};
+
+    // Agrupar entradas y salidas por fecha (y usuario, aunque aquí es uno)
+    data.forEach(item => {
+      const key = item.fecha; // Solo fecha porque es mismo usuario
+      if (!registrosAgrupados[key]) {
+        registrosAgrupados[key] = {
+          nombre: item.nombre,
+          rol: item.rol,
+          fecha: item.fecha,
+          entrada: null,
+          salida: null
+        };
+      }
+      if (item.tipo === 'entrada') {
+        registrosAgrupados[key].entrada = item.hora;
+      } else if (item.tipo === 'salida') {
+        registrosAgrupados[key].salida = item.hora;
+      }
+    });
+
+    const registros = Object.values(registrosAgrupados);
+    registros.forEach((r, i) => {
+      const tr = document.createElement('tr');
+      const estado = r.entrada ? (r.salida ? 'A tiempo' : 'En progreso') : 'Ausente';
+      tr.innerHTML = `
+        <td>${i + 1}.</td>
+        <td>${r.nombre}</td>
+        <td><span class="text-muted">${r.rol}</span></td>
+        <td>${r.fecha}</td>
+        <td>${r.entrada || '-'}</td>
+        <td>${r.salida || '-'}</td>
+        <td>${estado}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  })
+  .catch(err => {
+    console.error("Error cargando asistencias:", err);
+  });
+}
+  </script>
+  </body>
+</html>
+

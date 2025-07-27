@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solicitudes - Gerente</title>
+    <!-- Estilos KaiAdmin -->
+    <link rel="stylesheet" href="../../../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="../../../assets/css/kaiadmin.min.css" />
+    <link rel="icon" href="../../../assets/img/InicialLogo.png" type="image/x-icon">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+  </head>
+  <body class="sidebar-mini">
+    <div class="wrapper">
+      <div class="main-panel">
+        <!--Componentes de header y sidebar-->
+        <div id="header-placeholder"></div>
+        <div id="sidebar-placeholder"></div>
+
+        <div class="container">
+          <div class="page-inner">
+            <div class="card mt-4">
+              <div class="card-header">
+                <h5>Mostrando un total de <span id="totalSolicitudes">0</span> solicitudes</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>S.No</th>
+                        <th>Nombre</th>
+                        <th>Rol</th>
+                        <th>Motivo</th>
+                        <th>Fecha de salida</th>
+                        <th>Fecha de regreso</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                     <!--contenido-->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts KaiAdmin -->
+    <script src="../../../assets/js/core/jquery-3.7.1.min.js"></script>
+    <script src="../../../assets/js/core/popper.min.js"></script>
+    <script src="../../../assets/js/core/bootstrap.min.js"></script>
+    <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../../../assets/js/kaiadmin.min.js"></script>
+
+    <!-- Cargar componentes y activar hamburguesa -->
+    <script>
+      // Cargar header
+      fetch("../componentes/header.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("header-placeholder").innerHTML = data;
+
+          // Actualizar nombre y rol aquí, después de que el header esté insertado
+          const token = localStorage.getItem('token');
+          if (token) {
+            fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+              headers: {
+                Authorization: "Bearer " + token
+              }
+            })
+            .then(res => {
+              if (!res.ok) throw new Error("No autorizado");
+              return res.json();
+            })
+            .then(data => {
+              const nombreElem = document.getElementById("nombreUsuario");
+              const rolElem = document.getElementById("rolUsuario");
+
+              if (nombreElem) nombreElem.textContent = data.nombre || "Usuario";
+              if (rolElem) rolElem.textContent = capitalizar(data.rol || "Rol");
+            })
+            .catch(console.error);
+          }
+
+          // logout aquí
+          const logoutBtn = document.getElementById("logoutBtn");
+          if (logoutBtn) {
+            logoutBtn.addEventListener("click", function(e) {
+              e.preventDefault();
+              localStorage.removeItem("token");
+              window.location.href = "../../../index.html";
+            });
+          }
+        });
+
+      function capitalizar(texto) {
+        return texto.charAt(0).toUpperCase() + texto.slice(1);
+      }
+    
+      // Cargar sidebar
+      fetch("../componentes/sidebarGerente.html")
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("sidebar-placeholder").innerHTML = data;
+          setTimeout(() => {
+            document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                document.body.classList.toggle("sidebar_minimize");
+              });
+            });
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              link.addEventListener("click", () => {
+                if (window.innerWidth < 992) {
+                  document.body.classList.remove("sidebar_minimize");
+                }
+              });
+            });
+            document.querySelectorAll(".nav-item").forEach((item) => {
+              item.classList.remove("active");
+            });
+            const path = window.location.pathname.split("/").pop();
+            document.querySelectorAll(".sidebar-link").forEach((link) => {
+              if (
+                link.getAttribute("href") &&
+                link.getAttribute("href").includes(path)
+              ) {
+                link.parentElement.classList.add("active");
+              }
+            });
+          }, 100);
+        });
+
+        </script>
+
+<script>
+const token = localStorage.getItem('token');
+if (!token) {
+  window.location.href = "../../../index.html"; // O la ruta real a tu login
+} else {
+  fetch('http://127.0.0.1:8000/api/usuarios/perfil/', {
+    headers: { Authorization: 'Bearer ' + token }
+  })
+  .then(r => r.json())
+  .then(data => {
+    console.log('Perfil:', data);  // <-- Mira el valor aquí en consola
+    if (data.rol !== "gerente") {
+      window.location.href = "../../no-autorizado.html";
+    }
+    // Si es gerente, no hagas nada: ya puede ver la página
+  })
+  .catch(() => window.location.href = "../../../index.html");
+}
+
+
+//APROBAR O RECHAZAR SOLICITUDES 
+const tablaBody = document.querySelector("table tbody");
+
+fetch("http://127.0.0.1:8000/api/usuarios/solicitudes-gerente/", {
+  headers: {
+    Authorization: "Bearer " + token,
+  },
+})
+.then(res => res.json())
+.then(data => {
+document.getElementById('totalSolicitudes').textContent = data.length;
+
+
+  tablaBody.innerHTML = "";
+  data.forEach((sol, i) => {
+const acciones = sol.estado.toLowerCase() === "pendiente"
+  ? `<button type="button" class="btn btn-icon btn-success btn-sm me-1" title="Aceptar" onclick="actualizarEstado(${sol.id}, 'aprobado')">
+        <i class="fa fa-check"></i>
+     </button>
+     <button type="button" class="btn btn-icon btn-danger btn-sm" title="Rechazar" onclick="actualizarEstado(${sol.id}, 'rechazado')">
+        <i class="fa fa-times"></i>
+     </button>`
+  : sol.estado.toLowerCase() === "aprobado"
+    ? `<span class="badge bg-success">Aprobado</span>`
+    : sol.estado.toLowerCase() === "rechazado"
+      ? `<span class="badge bg-danger">Rechazado</span>`
+      : `<span class="badge bg-secondary">${sol.estado.charAt(0).toUpperCase() + sol.estado.slice(1)}</span>`;
+
+
+    const row = `
+      <tr>
+        <td>${i + 1}.</td>
+        <td>${sol.nombre || "N/A"}</td>
+        <td><span class="text-muted">${sol.rol}</span></td>
+        <td>${sol.motivo}</td>
+        <td>${sol.fecha_inicio}</td>
+        <td>${sol.fecha_fin}</td>
+        <td>${acciones}</td>
+      </tr>
+    `;
+    tablaBody.insertAdjacentHTML("beforeend", row);
+  });
+});
+
+function actualizarEstado(id, nuevoEstado) {
+  fetch(`http://127.0.0.1:8000/api/usuarios/solicitudes-gerente/${id}/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify({ estado: nuevoEstado })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Error al actualizar");
+    return res.json();
+  })
+  .then(() => location.reload())
+  .catch(err => alert("Error al actualizar estado"));
+}
+  </script>
+  </body>
+</html>
