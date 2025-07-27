@@ -19,6 +19,7 @@ from .views import (
     SolicitudDiaGerenteView,
     AsistenciaEmpleadoView,
     DashboardGerenteStatsView,
+    AsistenciasEncargadoView
 )
 
 router = DefaultRouter()
@@ -51,5 +52,6 @@ urlpatterns = [
 
     path('asistencia/', AsistenciaView.as_view(), name='asistencia'),
     path('asistencias-todas/', AsistenciasTodasView.as_view(), name='asistencias-todas'),
+    path('asistencias/encargado/', AsistenciasEncargadoView.as_view(), name='asistencias-encargado'),
 
 ]

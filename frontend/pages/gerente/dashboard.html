@@ -141,37 +141,22 @@
                 <h5>Detalles de asistencia</h5>
               </div>
               <div class="card-body">
-                <!-- Filtros -->
-                <div class="row mt-2 mb-4 align-items-end">
-                  <!-- Rango de fecha -->
-                  <div class="col-md-5">
-                    <label>Rango de fecha:</label>
-                    <div class="d-flex gap-2">
-                      <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                        <input type="date" class="form-control" id="fechaInicio" value="2025-07-17" />
-                      </div>
-                      <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                        <input type="date" class="form-control" id="fechaFin" value="2024-06-10" />
-                      </div>
+                 <!-- Filtros -->
+                  <div class="row mt-2 mb-4 align-items-end">
+                    <!-- Sucursal -->
+                    <div class="col-md-6">
+                      <label>Sucursal:</label>
+                        <select class="form-select" id="selectSucursal" onchange="filtrarSucursal()">
+                          <option value="">Todas las sucursales</option>
+                        </select>
                     </div>
-                  </div>
 
-                  <!-- Sucursal -->
-                  <div class="col-md-3">
-                    <label>Sucursal:</label>
-                    <select class="form-select">
-                      <option selected>Todas</option>
-                      <option>Sucursal A</option>
-                      <option>Sucursal B</option>
-                    </select>
-                  </div>
+                    <!-- Total asistencia -->
+                    <div class="col-md-6 text-end">
+                      <label>Total de asistencia:</label>
+                      <h5 class="mb-0" id="totalAsistencias">0</h5>
 
-                  <!-- Total asistencia -->
-                  <div class="col-md-4 text-end">
-                    <label>Total de asistencia:</label>
-                    <h5 class="mb-0">2</h5>
+                    </div>
                   </div>
                 </div>
 
@@ -359,6 +344,9 @@ function cargarAsistencias() {
         `;
         tbody.appendChild(tr);
       });
+
+      // Actualizar el total también
+      document.getElementById('totalAsistencias').textContent = registros.length;
     });
 }
 
@@ -384,6 +372,91 @@ function cargarDashboardGerente() {
     console.error(err);
   });
 }
+
+cargarSucursales(); // 👈 cargar el select al inicio
+
+function cargarSucursales() {
+  fetch('http://127.0.0.1:8000/api/usuarios/sucursales/', {
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token')
+    }
+  })
+    .then(res => res.json())
+    .then(data => {
+      const select = document.getElementById('selectSucursal');
+      data.forEach(sucursal => {
+        const option = document.createElement('option');
+        option.value = sucursal.id;
+        option.textContent = sucursal.nombre;
+        select.appendChild(option);
+      });
+    })
+    .catch(err => console.error('Error al cargar sucursales', err));
+}
+
+function filtrarSucursal() {
+  const sucursalId = document.getElementById("selectSucursal").value;
+  const token = localStorage.getItem("token");
+  let url = "http://127.0.0.1:8000/api/usuarios/asistencias-todas/";
+
+  if (sucursalId) {
+    url += `?sucursal_id=${sucursalId}`;
+  }
+
+  fetch(url, {
+    headers: {
+      Authorization: "Bearer " + token
+    }
+  })
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector("table tbody");
+      tbody.innerHTML = "";
+
+      const registrosAgrupados = {};
+
+      data.forEach(item => {
+        const key = item.nombre + item.fecha;
+        if (!registrosAgrupados[key]) {
+          registrosAgrupados[key] = {
+            nombre: item.nombre,
+            rol: item.rol,
+            fecha: item.fecha,
+            entrada: null,
+            salida: null
+          };
+        }
+        if (item.tipo === 'entrada') {
+          registrosAgrupados[key].entrada = item.hora;
+        } else if (item.tipo === 'salida') {
+          registrosAgrupados[key].salida = item.hora;
+        }
+      });
+
+      const registros = Object.values(registrosAgrupados);
+      registros.forEach((r, i) => {
+        const tr = document.createElement('tr');
+        const estado = r.entrada ? (r.salida ? 'A tiempo' : 'En progreso') : 'Ausente';
+        tr.innerHTML = `
+          <td>${i + 1}.</td>
+          <td>${r.nombre}</td>
+          <td><span class="text-muted">${r.rol}</span></td>
+          <td>${r.fecha}</td>
+          <td>${r.entrada || '-'}</td>
+          <td>${r.salida || '-'}</td>
+          <td>${estado}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Aquí actualizamos el total de asistencias dinámico
+      document.getElementById('totalAsistencias').textContent = registros.length;
+    })
+    .catch(err => {
+      console.error("Error al filtrar asistencias", err);
+    });
+}
+
   </script>
   </body>
 </html>

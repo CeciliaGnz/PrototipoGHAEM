@@ -137,38 +137,14 @@
             </div>
 
             <div class="card mt-4">
-              <div class="card-header">
-                <h5>Detalles de asistencia</h5>
-              </div>
-              <div class="card-body">
-                <!-- Filtros -->
-                <div class="row mt-2 mb-4 align-items-end">
-                  <!-- Rango de fecha -->
-                  <div class="col-md-5">
-                    <label>Rango de fecha:</label>
-                    <div class="d-flex gap-2">
-                      <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                        <input type="date" class="form-control" value="2024-06-10" />
-                      </div>
-                      <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                        <input type="date" class="form-control" value="2024-06-10" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Sucursal -->
-                  <div class="col-md-3">
-                    <label>Sucursal: <span>Tu sucursal</span></label>
-                  </div>
-
-                  <!-- Total asistencia -->
-                  <div class="col-md-4 text-end">
-                    <label>Total de asistencia:</label>
-                    <h5 class="mb-0">2</h5>
-                  </div>
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Detalles de asistencia</h5>
+                <div>
+                  <label class="me-2 mb-0">Total de asistencia:</label>
+                  <h5 class="mb-0 d-inline" id="totalAsistencias">0</h5>
                 </div>
+              </div>
+
 
                 <div class="table-responsive">
                   <table class="table">
@@ -184,15 +160,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1.</td>
-                        <td>Cecilia González</td>
-                        <td><span class="text-muted">Encargada</span></td>
-                        <td>1 Jun. 2024</td>
-                        <td>10:00 a.m</td>
-                        <td>7:00 p.m</td>
-                        <td>A tiempo</td>
-                      </tr>
+                      
                     </tbody>
                   </table>
                 </div>
@@ -210,105 +178,206 @@
     <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
     <script src="../../../assets/js/kaiadmin.min.js"></script>
 
-    <!-- Cargar componentes header y sidebar -->
-    <script>
-            // Cargar header
-      fetch("../componentes/header.html")
-        .then((res) => res.text())
-        .then((data) => {
-          document.getElementById("header-placeholder").innerHTML = data;
+   <script>
+  // Función para capitalizar texto
+  function capitalizar(texto) {
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
 
-          // Actualizar nombre y rol aquí, después de que el header esté insertado
-          const token = localStorage.getItem('token');
-          if (token) {
-            fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
-              headers: {
-                Authorization: "Bearer " + token
-              }
-            })
-            .then(res => {
-              if (!res.ok) throw new Error("No autorizado");
-              return res.json();
-            })
-            .then(data => {
-              const nombreElem = document.getElementById("nombreUsuario");
-              const rolElem = document.getElementById("rolUsuario");
+  // Cargar header y actualizar nombre y rol
+  fetch("../componentes/header.html")
+    .then((res) => res.text())
+    .then((data) => {
+      document.getElementById("header-placeholder").innerHTML = data;
 
-              if (nombreElem) nombreElem.textContent = data.nombre || "Usuario";
-              if (rolElem) rolElem.textContent = capitalizar(data.rol || "Rol");
-            })
-            .catch(console.error);
-          }
+      const token = localStorage.getItem('token');
+      if (token) {
+        fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+          headers: { Authorization: "Bearer " + token }
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("No autorizado");
+            return res.json();
+          })
+          .then(data => {
+            const nombreElem = document.getElementById("nombreUsuario");
+            const rolElem = document.getElementById("rolUsuario");
 
-          // logout aquí
-          const logoutBtn = document.getElementById("logoutBtn");
-          if (logoutBtn) {
-            logoutBtn.addEventListener("click", function(e) {
-              e.preventDefault();
-              localStorage.removeItem("token");
-              window.location.href = "../../../index.html";
-            });
-          }
-        });
+            if (nombreElem) nombreElem.textContent = data.nombre || "Usuario";
+            if (rolElem) rolElem.textContent = capitalizar(data.rol || "Rol");
 
-      function capitalizar(texto) {
-        return texto.charAt(0).toUpperCase() + texto.slice(1);
+            // Validar rol y cargar asistencias si es encargado
+            if (data.rol !== "encargado") {
+              window.location.href = "../../no-autorizado.html";
+              return;
+            }
+
+            // Cargar asistencias aquí, sólo si es encargado
+            cargarAsistenciasEncargado(token);
+          })
+          .catch(() => {
+            console.error("No autorizado");
+            window.location.href = "../../../index.html";
+          });
+      } else {
+        window.location.href = "../../../index.html";
       }
-    
-      // Cargar sidebar
-      fetch("../componentes/sidebar.html")
-        .then((res) => res.text())
-        .then((data) => {
-          document.getElementById("sidebar-placeholder").innerHTML = data;
-          setTimeout(() => {
-            document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
-              btn.addEventListener("click", () => {
-                document.body.classList.toggle("sidebar_minimize");
-              });
-            });
-            document.querySelectorAll(".sidebar-link").forEach((link) => {
-              link.addEventListener("click", () => {
-                if (window.innerWidth < 992) {
-                  document.body.classList.remove("sidebar_minimize");
-                }
-              });
-            });
-            document.querySelectorAll(".nav-item").forEach((item) => {
-              item.classList.remove("active");
-            });
-            const path = window.location.pathname.split("/").pop();
-            document.querySelectorAll(".sidebar-link").forEach((link) => {
-              if (
-                link.getAttribute("href") &&
-                link.getAttribute("href").includes(path)
-              ) {
-                link.parentElement.classList.add("active");
-              }
-            });
-          }, 100);
-        });
-    </script>
-    
 
-<script>
-const token = localStorage.getItem('token');
-if (!token) {
-  window.location.href = "../../../index.html"; // O la ruta real a tu login
-} else {
-  fetch('http://127.0.0.1:8000/api/usuarios/perfil/', {
-    headers: { Authorization: 'Bearer ' + token }
-  })
-  .then(r => r.json())
-  .then(data => {
-    console.log('Perfil:', data);  // <-- Mira el valor aquí en consola
-    if (data.rol !== "encargado") {
-      window.location.href = "../../no-autorizado.html";
-    }
-    // Si es gerente, no hagas nada: ya puede ver la página
-  })
-  .catch(() => window.location.href = "../../../index.html");
-}
-  </script>
+      // Logout
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          localStorage.removeItem("token");
+          window.location.href = "../../../index.html";
+        });
+      }
+    });
+
+  // Cargar sidebar y agregar lógica para toggles y active links
+  fetch("../componentes/sidebar.html")
+    .then((res) => res.text())
+    .then((data) => {
+      document.getElementById("sidebar-placeholder").innerHTML = data;
+      setTimeout(() => {
+        document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            document.body.classList.toggle("sidebar_minimize");
+          });
+        });
+        document.querySelectorAll(".sidebar-link").forEach((link) => {
+          link.addEventListener("click", () => {
+            if (window.innerWidth < 992) {
+              document.body.classList.remove("sidebar_minimize");
+            }
+          });
+        });
+        document.querySelectorAll(".nav-item").forEach((item) => {
+          item.classList.remove("active");
+        });
+        const path = window.location.pathname.split("/").pop();
+        document.querySelectorAll(".sidebar-link").forEach((link) => {
+          if (
+            link.getAttribute("href") &&
+            link.getAttribute("href").includes(path)
+          ) {
+            link.parentElement.classList.add("active");
+          }
+        });
+      }, 100);
+    });
+
+  // Función para cargar asistencias del encargado y mostrar en tabla y dashboard
+  function cargarAsistenciasEncargado(token) {
+    fetch('http://127.0.0.1:8000/api/usuarios/asistencias/encargado/', {
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        // Agrupar por usuario + fecha para combinar entrada y salida
+        const registrosAgrupados = {};
+
+        data.forEach(item => {
+          const key = item.nombre + item.fecha;
+          if (!registrosAgrupados[key]) {
+            registrosAgrupados[key] = {
+              nombre: item.nombre,
+              rol: item.rol,
+              fecha: item.fecha,
+              entrada: null,
+              salida: null,
+              estado: ''
+            };
+          }
+          if (item.tipo === 'entrada') {
+            registrosAgrupados[key].entrada = item.hora;
+          }
+          if (item.tipo === 'salida') {
+            registrosAgrupados[key].salida = item.hora;
+          }
+        });
+
+        const registros = Object.values(registrosAgrupados);
+
+        // Totales iniciales
+        let totalEmpleados = 0;
+        let empleadosTarde = 0;
+        let empleadosATiempo = 0;
+        let empleadosAusentes = 0;
+
+        // Usuarios únicos para contar empleados totales
+        const usuariosUnicos = new Set();
+
+        registros.forEach(r => {
+          usuariosUnicos.add(r.nombre);
+
+          if (r.entrada) {
+            if (r.salida) {
+              // Simplificado: entrada después de 08:15 es tarde
+              const horaEntrada = parseTime(r.entrada);
+              const limiteTarde = parseTime('08:15:00');
+              if (horaEntrada > limiteTarde) {
+                r.estado = 'Tarde';
+                empleadosTarde++;
+              } else {
+                r.estado = 'A tiempo';
+                empleadosATiempo++;
+              }
+            } else {
+              r.estado = 'En progreso';
+              empleadosATiempo++;
+            }
+          } else {
+            r.estado = 'Ausente';
+            empleadosAusentes++;
+          }
+        });
+
+        totalEmpleados = usuariosUnicos.size;
+
+        // Actualizar tarjetas
+        document.querySelector('.dashboard-card.text-success .value').textContent = totalEmpleados;
+        document.querySelector('.dashboard-card.text-warning .value').textContent = empleadosTarde;
+        document.querySelector('.dashboard-card.text-primary .value').textContent = empleadosATiempo;
+        document.querySelector('.dashboard-card.text-danger .value').textContent = empleadosAusentes;
+
+        // Renderizar tabla
+        const tbody = document.querySelector('table tbody');
+        tbody.innerHTML = '';
+
+        registros.forEach((r, i) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${i + 1}.</td>
+            <td>${r.nombre}</td>
+            <td>${r.rol}</td>
+            <td>${r.fecha}</td>
+            <td>${r.entrada || '-'}</td>
+            <td>${r.salida || '-'}</td>
+            <td>${r.estado}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Actualizar total asistencia
+        document.getElementById('totalAsistencias').textContent = registros.length;
+      })
+      .catch(err => {
+        console.error("Error cargando asistencias encargado:", err);
+      });
+  }
+
+  // Convertir HH:MM:SS a Date para comparación
+  function parseTime(t) {
+    const [h, m, s] = t.split(':').map(Number);
+    const d = new Date();
+    d.setHours(h, m, s || 0, 0);
+    return d;
+  }
+</script>
+
   </body>
 </html>
 

@@ -137,34 +137,13 @@
             </div>
 
             <div class="card mt-4">
-              <div class="card-header">
-                <h5>Detalles de mi asistencia</h5>
-              </div>
-              <div class="card-body">
-                <!-- Filtros -->
-                <div class="row mt-2 mb-4 align-items-end">
-                  <!-- Rango de fecha -->
-                  <div class="col-md-5">
-                    <label>Rango de fecha:</label>
-                    <div class="d-flex gap-2">
-                      <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                        <input type="date" class="form-control" value="2024-06-10" />
-                      </div>
-                      <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                        <input type="date" class="form-control" value="2024-06-10" />
-                      </div>
-                    </div>
-                  </div>
-
-
-                  <!-- Total asistencia -->
-                  <div class="col-md-4 text-end">
-                    <label>Total de asistencia:</label>
-                    <h5 class="mb-0">2</h5>
-                  </div>
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Detalles de asistencia</h5>
+                <div>
+                  <label class="me-2 mb-0">Total de asistencia:</label>
+                  <h5 class="mb-0 d-inline" id="totalAsistencias">0</h5>
                 </div>
+              </div>
 
                 <div class="table-responsive">
                   <table class="table">
@@ -198,161 +177,166 @@
     <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
     <script src="../../../assets/js/kaiadmin.min.js"></script>
 
-    <!-- Cargar componentes header y sidebar -->
-    <script>
-      // Cargar header
-      fetch("../componentes/header.html")
-        .then((res) => res.text())
-        .then((data) => {
-          document.getElementById("header-placeholder").innerHTML = data;
+   <script>
+  // Cargar header
+  fetch("../componentes/header.html")
+    .then((res) => res.text())
+    .then((data) => {
+      document.getElementById("header-placeholder").innerHTML = data;
 
-          // Actualizar nombre y rol aquí, después de que el header esté insertado
-          const token = localStorage.getItem('token');
-          if (token) {
-            fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
-              headers: {
-                Authorization: "Bearer " + token
-              }
-            })
-            .then(res => {
-              if (!res.ok) throw new Error("No autorizado");
-              return res.json();
-            })
-            .then(data => {
-              const nombreElem = document.getElementById("nombreUsuario");
-              const rolElem = document.getElementById("rolUsuario");
-
-              if (nombreElem) nombreElem.textContent = data.nombre || "Usuario";
-              if (rolElem) rolElem.textContent = capitalizar(data.rol || "Rol");
-            })
-            .catch(console.error);
+      // Actualizar nombre y rol aquí, después de que el header esté insertado
+      const token = localStorage.getItem('token');
+      if (token) {
+        fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+          headers: {
+            Authorization: "Bearer " + token
           }
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("No autorizado");
+            return res.json();
+          })
+          .then(data => {
+            const nombreElem = document.getElementById("nombreUsuario");
+            const rolElem = document.getElementById("rolUsuario");
 
-          // logout aquí
-          const logoutBtn = document.getElementById("logoutBtn");
-          if (logoutBtn) {
-            logoutBtn.addEventListener("click", function(e) {
-              e.preventDefault();
-              localStorage.removeItem("token");
-              window.location.href = "../../../index.html";
-            });
-          }
-        });
-
-      function capitalizar(texto) {
-        return texto.charAt(0).toUpperCase() + texto.slice(1);
+            if (nombreElem) nombreElem.textContent = data.nombre || "Usuario";
+            if (rolElem) rolElem.textContent = capitalizar(data.rol || "Rol");
+          })
+          .catch(console.error);
       }
-    
-      // Cargar sidebar
-      fetch("../componentes/sidebarEmpleado.html")
-        .then((res) => res.text())
-        .then((data) => {
-          document.getElementById("sidebar-placeholder").innerHTML = data;
-          setTimeout(() => {
-            document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
-              btn.addEventListener("click", () => {
-                document.body.classList.toggle("sidebar_minimize");
-              });
-            });
-            document.querySelectorAll(".sidebar-link").forEach((link) => {
-              link.addEventListener("click", () => {
-                if (window.innerWidth < 992) {
-                  document.body.classList.remove("sidebar_minimize");
-                }
-              });
-            });
-            document.querySelectorAll(".nav-item").forEach((item) => {
-              item.classList.remove("active");
-            });
-            const path = window.location.pathname.split("/").pop();
-            document.querySelectorAll(".sidebar-link").forEach((link) => {
-              if (
-                link.getAttribute("href") &&
-                link.getAttribute("href").includes(path)
-              ) {
-                link.parentElement.classList.add("active");
-              }
-            });
-          }, 100);
+
+      // logout aquí
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", function(e) {
+          e.preventDefault();
+          localStorage.removeItem("token");
+          window.location.href = "../../../index.html";
         });
-    </script>
-    
+      }
+    });
+
+  function capitalizar(texto) {
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+
+  // Cargar sidebar
+  fetch("../componentes/sidebarEmpleado.html")
+    .then((res) => res.text())
+    .then((data) => {
+      document.getElementById("sidebar-placeholder").innerHTML = data;
+      setTimeout(() => {
+        document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            document.body.classList.toggle("sidebar_minimize");
+          });
+        });
+        document.querySelectorAll(".sidebar-link").forEach((link) => {
+          link.addEventListener("click", () => {
+            if (window.innerWidth < 992) {
+              document.body.classList.remove("sidebar_minimize");
+            }
+          });
+        });
+        document.querySelectorAll(".nav-item").forEach((item) => {
+          item.classList.remove("active");
+        });
+        const path = window.location.pathname.split("/").pop();
+        document.querySelectorAll(".sidebar-link").forEach((link) => {
+          if (
+            link.getAttribute("href") &&
+            link.getAttribute("href").includes(path)
+          ) {
+            link.parentElement.classList.add("active");
+          }
+        });
+      }, 100);
+    });
+</script>
 
 <script>
-const token = localStorage.getItem('token');
-if (!token) {
-  window.location.href = "../../../index.html"; // O la ruta real a tu login
-} else {
-  fetch('http://127.0.0.1:8000/api/usuarios/perfil/', {
-    headers: { Authorization: 'Bearer ' + token }
-  })
-  .then(r => r.json())
-  .then(data => {
-    console.log('Perfil:', data);  // <-- Mira el valor aquí en consola
-    if (data.rol !== "empleado") {
-      window.location.href = "../../no-autorizado.html";
-    }
-    cargarAsistencias();
-    // Si es empleado, no hagas nada: ya puede ver la página
-  })
-  .catch(() => window.location.href = "../../../index.html");
-}
-
-
-function cargarAsistencias() {
   const token = localStorage.getItem('token');
-  fetch("http://127.0.0.1:8000/api/usuarios/asistencias/mis-asistencias/", {
-    headers: {
-      Authorization: "Bearer " + token
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
-    const tbody = document.querySelector("table tbody");
-    tbody.innerHTML = "";
+  if (!token) {
+    window.location.href = "../../../index.html"; // O la ruta real a tu login
+  } else {
+    fetch('http://127.0.0.1:8000/api/usuarios/perfil/', {
+      headers: { Authorization: 'Bearer ' + token }
+    })
+      .then(r => r.json())
+      .then(data => {
+        console.log('Perfil:', data);  // <-- Mira el valor aquí en consola
+        if (data.rol !== "empleado") {
+          window.location.href = "../../no-autorizado.html";
+        }
+        cargarAsistencias();
+        // Si es empleado, no hagas nada: ya puede ver la página
+      })
+      .catch(() => window.location.href = "../../../index.html");
+  }
 
-    const registrosAgrupados = {};
 
-    // Agrupar entradas y salidas por fecha (y usuario, aunque aquí es uno)
-    data.forEach(item => {
-      const key = item.fecha; // Solo fecha porque es mismo usuario
-      if (!registrosAgrupados[key]) {
-        registrosAgrupados[key] = {
-          nombre: item.nombre,
-          rol: item.rol,
-          fecha: item.fecha,
-          entrada: null,
-          salida: null
-        };
+  function cargarAsistencias() {
+    const token = localStorage.getItem('token');
+    fetch("http://127.0.0.1:8000/api/usuarios/asistencias/mis-asistencias/", {
+      headers: {
+        Authorization: "Bearer " + token
       }
-      if (item.tipo === 'entrada') {
-        registrosAgrupados[key].entrada = item.hora;
-      } else if (item.tipo === 'salida') {
-        registrosAgrupados[key].salida = item.hora;
-      }
-    });
+    })
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector("table tbody");
+        tbody.innerHTML = "";
 
-    const registros = Object.values(registrosAgrupados);
-    registros.forEach((r, i) => {
-      const tr = document.createElement('tr');
-      const estado = r.entrada ? (r.salida ? 'A tiempo' : 'En progreso') : 'Ausente';
-      tr.innerHTML = `
-        <td>${i + 1}.</td>
-        <td>${r.nombre}</td>
-        <td><span class="text-muted">${r.rol}</span></td>
-        <td>${r.fecha}</td>
-        <td>${r.entrada || '-'}</td>
-        <td>${r.salida || '-'}</td>
-        <td>${estado}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-  })
-  .catch(err => {
-    console.error("Error cargando asistencias:", err);
-  });
-}
-  </script>
+        const registrosAgrupados = {};
+
+        // Agrupar entradas y salidas por fecha (y usuario, aunque aquí es uno)
+        data.forEach(item => {
+          const key = item.fecha; // Solo fecha porque es mismo usuario
+          if (!registrosAgrupados[key]) {
+            registrosAgrupados[key] = {
+              nombre: item.nombre,
+              rol: item.rol,
+              fecha: item.fecha,
+              entrada: null,
+              salida: null
+            };
+          }
+          if (item.tipo === 'entrada') {
+            registrosAgrupados[key].entrada = item.hora;
+          } else if (item.tipo === 'salida') {
+            registrosAgrupados[key].salida = item.hora;
+          }
+        });
+
+        const registros = Object.values(registrosAgrupados);
+        registros.forEach((r, i) => {
+          const tr = document.createElement('tr');
+          const estado = r.entrada ? (r.salida ? 'A tiempo' : 'En progreso') : 'Ausente';
+          tr.innerHTML = `
+            <td>${i + 1}.</td>
+            <td>${r.nombre}</td>
+            <td><span class="text-muted">${r.rol}</span></td>
+            <td>${r.fecha}</td>
+            <td>${r.entrada || '-'}</td>
+            <td>${r.salida || '-'}</td>
+            <td>${estado}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Actualizar total de asistencias
+        const totalAsistenciasElem = document.getElementById("totalAsistencias");
+        if (totalAsistenciasElem) {
+          totalAsistenciasElem.textContent = registros.length;
+        }
+      })
+      .catch(err => {
+        console.error("Error cargando asistencias:", err);
+      });
+  }
+</script>
+
   </body>
 </html>
 

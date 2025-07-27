@@ -164,10 +164,38 @@ class AsistenciasTodasView(APIView):
     permission_classes = [IsAuthenticated, IsGerente]
 
     def get(self, request):
-        asistencias = Asistencia.objects.exclude(usuario__rol='gerente').order_by('-fecha', '-hora')
+        sucursal_id = request.query_params.get('sucursal_id')  # puede ser None o string
+
+        if sucursal_id in [None, "", "todos"]:  # Mostrar todas las asistencias
+            asistencias = Asistencia.objects.exclude(usuario__rol='gerente').order_by('-fecha', '-hora')
+        else:
+            # Filtrar por empleados y encargados en la sucursal especificada
+            asistencias = Asistencia.objects.filter(
+                usuario__sucursales__id=sucursal_id,
+                usuario__rol__in=['empleado', 'encargado']
+            ).order_by('-fecha', '-hora').distinct()
+
         serializer = AsistenciaSerializer(asistencias, many=True)
         return Response(serializer.data)
-    
+
+#ASISTENCIA PARA ENCARGADO DE SU SUCURSAL
+class AsistenciasEncargadoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        usuario = request.user
+        # Obtener sucursales del encargado
+        sucursales_encargado = usuario.sucursales.all()
+        # Filtrar usuarios que tengan rol empleado o encargado y estén en esas sucursales
+        usuarios_validos = User.objects.filter(
+            rol__in=['empleado', 'encargado'],
+            sucursales__in=sucursales_encargado
+        ).distinct()
+
+        asistencias = Asistencia.objects.filter(usuario__in=usuarios_validos).order_by('-fecha', '-hora')
+        serializer = AsistenciaSerializer(asistencias, many=True)
+        return Response(serializer.data)
+
 
 # ASISTENCIA DE EMPLEADO PROPIA
 class AsistenciaEmpleadoView(APIView):

@@ -28,7 +28,7 @@
               <div class="card-header">
                 <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-2">
               <div>
-                <h4>Mostrando un total de <span>2</span> empleados de tu sucursal</h4>
+                <h4>Mostrando un total de <span id="totalEmpleados">0</span> empleados de tu sucursal</h4>
               </div>
              
             </div>
@@ -36,39 +36,7 @@
               <div class="card-body">
 
                 <div class="row row-demo-grid">
-                <!--Empleado 1-->
-                <div class="col-xl-4">
-                    <div class="card">
-                    <div class="card-body text-center">
-                        <h5 class="fw-bold mb-1">Cecilia González</h5>
-                        <p class="mb-1 text-muted">Rol: Vendedora</p>
-                        <p class="mb-3 text-muted">Sucursal A</p>
-
-                        <div class="d-flex justify-content-center gap-2">
-                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Ver asistencia">
-                            <i class="fas fa-calendar-check"></i>
-                        </button>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-
-                <!-- Empleado 2 -->
-                <div class="col-xl-4">
-                    <div class="card">
-                    <div class="card-body text-center">
-                        <h5 class="fw-bold mb-1">Empleado 2</h5>
-                        <p class="mb-1 text-muted">Rol: Vendedora</p>
-                        <p class="mb-3 text-muted">Sucursal A</p>
-
-                        <div class="d-flex justify-content-center gap-2">
-                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Ver asistencia">
-                            <i class="fas fa-calendar-check"></i>
-                        </button>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+                  <!--EMpleados-->
                 </div>
 
               </div>
@@ -88,105 +56,164 @@
     <script src="../../../assets/js/core/bootstrap.min.js"></script>
     <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
     <script src="../../../assets/js/kaiadmin.min.js"></script>
+<script>
+  // Función para capitalizar texto
+  function capitalizar(texto) {
+    if (!texto) return "";
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
 
-    <!-- Cargar componentes y activar hamburguesa -->
-    <script>
-      // Cargar header
-      fetch("../componentes/header.html")
-        .then((res) => res.text())
-        .then((data) => {
-          document.getElementById("header-placeholder").innerHTML = data;
+  // Cargar header y sidebar y luego cargar perfil y equipo
+  function cargarComponentesYEquipo() {
+    // Cargar header
+    fetch("../componentes/header.html")
+      .then((res) => res.text())
+      .then((data) => {
+        document.getElementById("header-placeholder").innerHTML = data;
 
-          // Actualizar nombre y rol aquí, después de que el header esté insertado
-          const token = localStorage.getItem('token');
-          if (token) {
-            fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
-              headers: {
-                Authorization: "Bearer " + token
-              }
-            })
-            .then(res => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+            headers: { Authorization: "Bearer " + token },
+          })
+            .then((res) => {
               if (!res.ok) throw new Error("No autorizado");
               return res.json();
             })
-            .then(data => {
+            .then((perfil) => {
               const nombreElem = document.getElementById("nombreUsuario");
               const rolElem = document.getElementById("rolUsuario");
 
-              if (nombreElem) nombreElem.textContent = data.nombre || "Usuario";
-              if (rolElem) rolElem.textContent = capitalizar(data.rol || "Rol");
-            })
-            .catch(console.error);
-          }
+              if (nombreElem) nombreElem.textContent = perfil.nombre || "Usuario";
+              if (rolElem) rolElem.textContent = capitalizar(perfil.rol || "Rol");
 
-          // logout aquí
-          const logoutBtn = document.getElementById("logoutBtn");
-          if (logoutBtn) {
-            logoutBtn.addEventListener("click", function(e) {
-              e.preventDefault();
-              localStorage.removeItem("token");
+              if (perfil.rol !== "encargado") {
+                window.location.href = "../../no-autorizado.html";
+                return;
+              }
+
+              cargarEquipoFiltradoPorSucursal(perfil);
+            })
+            .catch(() => {
               window.location.href = "../../../index.html";
             });
-          }
-        });
+        } else {
+          window.location.href = "../../../index.html";
+        }
 
-      function capitalizar(texto) {
-        return texto.charAt(0).toUpperCase() + texto.slice(1);
-      }
-    
-      // Cargar sidebar
-      fetch("../componentes/sidebar.html")
-        .then((res) => res.text())
-        .then((data) => {
-          document.getElementById("sidebar-placeholder").innerHTML = data;
-          setTimeout(() => {
-            document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
-              btn.addEventListener("click", () => {
-                document.body.classList.toggle("sidebar_minimize");
-              });
+        // logout botón
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            localStorage.removeItem("token");
+            window.location.href = "../../../index.html";
+          });
+        }
+      });
+
+    // Cargar sidebar
+    fetch("../componentes/sidebar.html")
+      .then((res) => res.text())
+      .then((data) => {
+        document.getElementById("sidebar-placeholder").innerHTML = data;
+        setTimeout(() => {
+          document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              document.body.classList.toggle("sidebar_minimize");
             });
-            document.querySelectorAll(".sidebar-link").forEach((link) => {
-              link.addEventListener("click", () => {
-                if (window.innerWidth < 992) {
-                  document.body.classList.remove("sidebar_minimize");
-                }
-              });
-            });
-            document.querySelectorAll(".nav-item").forEach((item) => {
-              item.classList.remove("active");
-            });
-            const path = window.location.pathname.split("/").pop();
-            document.querySelectorAll(".sidebar-link").forEach((link) => {
-              if (
-                link.getAttribute("href") &&
-                link.getAttribute("href").includes(path)
-              ) {
-                link.parentElement.classList.add("active");
+          });
+          document.querySelectorAll(".sidebar-link").forEach((link) => {
+            link.addEventListener("click", () => {
+              if (window.innerWidth < 992) {
+                document.body.classList.remove("sidebar_minimize");
               }
             });
-          }, 100);
-        });
-    </script>
-    
+          });
+          document.querySelectorAll(".nav-item").forEach((item) => {
+            item.classList.remove("active");
+          });
+          const path = window.location.pathname.split("/").pop();
+          document.querySelectorAll(".sidebar-link").forEach((link) => {
+            if (link.getAttribute("href") && link.getAttribute("href").includes(path)) {
+              link.parentElement.classList.add("active");
+            }
+          });
+        }, 100);
+      });
+  }
 
-<script>
-const token = localStorage.getItem('token');
-if (!token) {
-  window.location.href = "../../../index.html"; // O la ruta real a tu login
-} else {
-  fetch('http://127.0.0.1:8000/api/usuarios/perfil/', {
-    headers: { Authorization: 'Bearer ' + token }
-  })
-  .then(r => r.json())
-  .then(data => {
-    console.log('Perfil:', data);  // <-- Mira el valor aquí en consola
-    if (data.rol !== "encargado") {
-      window.location.href = "../../no-autorizado.html";
+  // Cargar equipo filtrado por sucursal del encargado
+  function cargarEquipoFiltradoPorSucursal(perfil) {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    // Obtener sucursal del encargado (asumo que es un string o id, o el primer elemento si es array)
+    let sucursalEncargado = null;
+    if (Array.isArray(perfil.sucursales) && perfil.sucursales.length > 0) {
+      sucursalEncargado = perfil.sucursales[0];
+    } else if (perfil.sucursal) {
+      sucursalEncargado = perfil.sucursal;
     }
-    // Si es gerente, no hagas nada: ya puede ver la página
-  })
-  .catch(() => window.location.href = "../../../index.html");
-}
-  </script>
+
+    if (!sucursalEncargado) {
+      console.warn("El encargado no tiene sucursal asignada.");
+      return;
+    }
+
+    fetch("http://127.0.0.1:8000/api/usuarios/empleados/", {
+      headers: { Authorization: "Bearer " + token },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al cargar empleados");
+        return res.json();
+      })
+      .then((empleados) => {
+        // Filtrar empleados y encargados que pertenecen a la misma sucursal que el encargado
+        const equipoFiltrado = empleados.filter((emp) => {
+          let sucursalesEmp = emp.sucursales || [];
+          if (!Array.isArray(sucursalesEmp)) sucursalesEmp = [sucursalesEmp];
+          return sucursalesEmp.some(
+            (s) => s == sucursalEncargado || s === sucursalEncargado
+          );
+        });
+
+        // Actualizar el texto con el total de empleados
+        const totalSpan = document.getElementById("totalEmpleados");
+        if (totalSpan) totalSpan.textContent = equipoFiltrado.length;
+
+        const contenedor = document.querySelector(".row-demo-grid");
+        if (!contenedor) return;
+        contenedor.innerHTML = "";
+
+        equipoFiltrado.forEach((emp) => {
+          const card = document.createElement("div");
+          card.className = "col-xl-4 mb-3";
+          card.innerHTML = `
+            <div class="card">
+              <div class="card-body text-center">
+                <h5 class="fw-bold mb-1">${emp.nombre}</h5>
+                <p class="mb-1 text-muted">Rol: ${capitalizar(emp.rol)}</p>
+                <p class="mb-1 text-muted">Cédula: ${emp.cedula || "No asignada"}</p>
+                <p class="mb-2 text-muted">Sucursal: ${
+                  emp.sucursal_nombres && emp.sucursal_nombres.length > 0
+                    ? emp.sucursal_nombres.join(", ")
+                    : "No asignada"
+                }</p>
+              </div>
+            </div>
+          `;
+          contenedor.appendChild(card);
+        });
+      })
+      .catch((err) => {
+        console.error("Error cargando empleados:", err);
+      });
+  }
+
+  // Ejecutar carga completa cuando DOM esté listo
+  document.addEventListener("DOMContentLoaded", cargarComponentesYEquipo);
+</script>
+
   </body>
 </html>
