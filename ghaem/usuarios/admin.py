@@ -60,8 +60,8 @@ class UserAdmin(BaseUserAdmin):
 # Admin de asistencias
 @admin.register(Asistencia)
 class AsistenciaAdmin(admin.ModelAdmin):
-    list_display = ('usuario', 'cedula', 'nombre', 'rol', 'tipo', 'fecha', 'hora')
-    list_filter = ('tipo', 'fecha', 'usuario__rol')
+    list_display = ('usuario', 'cedula', 'nombre', 'rol', 'tipo', 'fecha', 'hora', 'estado')  # <- aquí
+    list_filter = ('tipo', 'fecha', 'usuario__rol', 'estado')  # <- aquí si quieres filtrar por estado
     search_fields = ('usuario__cedula', 'usuario__nombre')
     date_hierarchy = 'fecha'
     ordering = ('-fecha', '-hora')

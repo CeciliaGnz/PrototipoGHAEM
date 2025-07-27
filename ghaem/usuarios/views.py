@@ -25,7 +25,7 @@ from datetime import timedelta
 from django.utils.timezone import localdate
 from django.db.models import F, ExpressionWrapper, TimeField
 from datetime import datetime, timedelta, time
-
+from horarios.models import Horario
 
 # Modelos y Serializers de tu app
 from .models import Asistencia, User, Sucursal, SolicitudDia
@@ -86,26 +86,62 @@ class AsistenciaView(APIView):
 
     def post(self, request):
         tipo = request.data.get('tipo')
+        sucursal_id = request.data.get('sucursal')
+        
         if tipo not in ['entrada', 'salida']:
             return Response({'error': 'Tipo inválido'}, status=400)
 
-        hoy = now().date()
+        hoy = timezone.localtime().date()
         usuario = request.user
 
         if tipo == 'salida':
             if not Asistencia.objects.filter(usuario=usuario, tipo='entrada', fecha=hoy).exists():
                 return Response({'error': 'No puedes marcar salida sin haber registrado la entrada primero.'}, status=400)
+
             if Asistencia.objects.filter(usuario=usuario, tipo='salida', fecha=hoy).exists():
                 return Response({'mensaje': 'Ya marcaste salida hoy'}, status=200)
 
         if tipo == 'entrada':
             if Asistencia.objects.filter(usuario=usuario, tipo='entrada', fecha=hoy).exists():
                 return Response({'mensaje': f'Ya marcaste {tipo} hoy'}, status=200)
+            
+        # Lógica de estado
+        dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
+        dia_hoy = dias[localtime().weekday()]
+        horario = Horario.objects.filter(
+            empleado=usuario,
+            sucursal_id=sucursal_id,
+            dia=dia_hoy
+        ).first()
+        hora_actual = localtime().time()
+        estado = ""
+
+        if horario:
+            tolerancia = timedelta(minutes=15)
+            entrada_limite = (datetime.combine(hoy, horario.hora_entrada) + tolerancia).time()
+            if tipo == "entrada":
+                if hora_actual > entrada_limite:
+                    estado = "tarde"
+                elif hora_actual < horario.hora_entrada:
+                    estado = "temprano"
+                else:
+                    estado = "puntual"
+            elif tipo == "salida":
+                if hora_actual < horario.hora_salida:
+                    estado = "temprano"
+                elif hora_actual > horario.hora_salida:
+                    estado = "fuera_de_horario"
+                else:
+                    estado = "puntual"
+        else:
+            estado = "sin_horario"  # <-- Aquí permites el registro de todos modos
+
 
         asistencia = Asistencia.objects.create(
             usuario=request.user,
             tipo=tipo,
-            hora=localtime().time()
+            hora=timezone.localtime().time(),
+            estado=estado
         )
 
         serializer = AsistenciaSerializer(asistencia)
@@ -114,6 +150,7 @@ class AsistenciaView(APIView):
             'tipo': tipo,
             'asistencia': serializer.data
         }, status=201)
+        
 
     # Listar asistencias
     def get(self, request):
@@ -266,3 +303,14 @@ class DashboardGerenteStatsView(APIView):
         }
 
         return Response(data)
+
+class EmpleadosDeSucursalViewSet(viewsets.ModelViewSet):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        usuario = self.request.user
+        return User.objects.filter(
+            sucursales__in=usuario.sucursales.all(),
+            rol__in=["empleado", "encargado"]
+        ).distinct()

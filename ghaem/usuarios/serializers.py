@@ -38,6 +38,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             rol=validated_data.get('rol', 'empleado')
         )
         user.sucursales.set(sucursales)
+        
         return user
 
 class AsistenciaSerializer(serializers.ModelSerializer):

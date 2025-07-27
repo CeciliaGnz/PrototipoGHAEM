@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from .views import EmpleadosDeSucursalViewSet
 
 from .views import (
     SucursalViewSet,
@@ -22,7 +23,8 @@ from .views import (
 
 router = DefaultRouter()
 router.register(r'sucursales', SucursalViewSet, basename='sucursal')
-router.register(r'empleados', UserViewSet, basename='empleados')  # <-- línea corregida
+router.register(r'todos', UserViewSet, basename='empleados-todos')  # <-- línea corregida
+router.register(r'empleados', EmpleadosDeSucursalViewSet, basename='empleados')
 
 urlpatterns = [
     path('', include(router.urls)),

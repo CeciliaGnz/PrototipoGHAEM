@@ -54,6 +54,15 @@ class Asistencia(models.Model):
         ('entrada', 'Hora de entrada'),
         ('salida', 'Hora de salida'),
     )
+    ESTADO_CHOICES = (
+        ('puntual', 'Puntual'),
+        ('tarde', 'Tarde'),
+        ('temprano', 'Temprano'),
+        ('fuera_de_horario', 'Fuera de horario'),
+        ('sin_horario', 'Sin horario'),
+        ('', 'No aplica'),
+    )
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, blank=True, default='')
 
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fecha = models.DateField(auto_now_add=True)
