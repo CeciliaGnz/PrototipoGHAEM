@@ -30,6 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
+        print("Datos validados recibidos:", validated_data)
         sucursales = validated_data.pop('sucursales', [])
         user = User.objects.create_user(
             cedula=validated_data['cedula'],
@@ -38,8 +39,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             rol=validated_data.get('rol', 'empleado')
         )
         user.sucursales.set(sucursales)
-        
         return user
+
 
 class AsistenciaSerializer(serializers.ModelSerializer):
     nombre = serializers.CharField(source='usuario.nombre', read_only=True)

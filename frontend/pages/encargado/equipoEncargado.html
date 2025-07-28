@@ -28,7 +28,7 @@
               <div class="card-header">
                 <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-2">
               <div>
-                <h4>Mostrando un total de <span id="totalEmpleados">0</span> empleados de tu sucursal</h4>
+                <h4>Mostrando empleados de tu sucursal</h4>
               </div>
              
             </div>
@@ -56,52 +56,59 @@
     <script src="../../../assets/js/core/bootstrap.min.js"></script>
     <script src="../../../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
     <script src="../../../assets/js/kaiadmin.min.js"></script>
-<script>
-  // Función para capitalizar texto
+
+    <script>
+  // Capitaliza la primera letra
   function capitalizar(texto) {
     if (!texto) return "";
     return texto.charAt(0).toUpperCase() + texto.slice(1);
   }
 
-  // Cargar header y sidebar y luego cargar perfil y equipo
+  // Ejecutar cuando el DOM esté listo
+  document.addEventListener("DOMContentLoaded", cargarComponentesYEquipo);
+
   function cargarComponentesYEquipo() {
-    // Cargar header
+    // Cargar el header
     fetch("../componentes/header.html")
-      .then((res) => res.text())
-      .then((data) => {
+      .then(res => res.text())
+      .then(data => {
         document.getElementById("header-placeholder").innerHTML = data;
 
         const token = localStorage.getItem("token");
-        if (token) {
-          fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
-            headers: { Authorization: "Bearer " + token },
-          })
-            .then((res) => {
-              if (!res.ok) throw new Error("No autorizado");
-              return res.json();
-            })
-            .then((perfil) => {
-              const nombreElem = document.getElementById("nombreUsuario");
-              const rolElem = document.getElementById("rolUsuario");
-
-              if (nombreElem) nombreElem.textContent = perfil.nombre || "Usuario";
-              if (rolElem) rolElem.textContent = capitalizar(perfil.rol || "Rol");
-
-              if (perfil.rol !== "encargado") {
-                window.location.href = "../../no-autorizado.html";
-                return;
-              }
-
-              cargarEquipoFiltradoPorSucursal(perfil);
-            })
-            .catch(() => {
-              window.location.href = "../../../index.html";
-            });
-        } else {
+        if (!token) {
           window.location.href = "../../../index.html";
+          return;
         }
 
-        // logout botón
+        // Obtener perfil del usuario
+        fetch("http://127.0.0.1:8000/api/usuarios/perfil/", {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("No autorizado");
+            return res.json();
+          })
+          .then(perfil => {
+            const nombreElem = document.getElementById("nombreUsuario");
+            const rolElem = document.getElementById("rolUsuario");
+
+            if (nombreElem) nombreElem.textContent = perfil.nombre || "Usuario";
+            if (rolElem) rolElem.textContent = capitalizar(perfil.rol || "Rol");
+
+            if (perfil.rol !== "encargado") {
+              window.location.href = "../../no-autorizado.html";
+              return;
+            }
+
+            cargarEquipoDesdeAPI();
+          })
+          .catch(() => {
+            window.location.href = "../../../index.html";
+          });
+
+        // Logout
         const logoutBtn = document.getElementById("logoutBtn");
         if (logoutBtn) {
           logoutBtn.addEventListener("click", function (e) {
@@ -114,27 +121,29 @@
 
     // Cargar sidebar
     fetch("../componentes/sidebar.html")
-      .then((res) => res.text())
-      .then((data) => {
+      .then(res => res.text())
+      .then(data => {
         document.getElementById("sidebar-placeholder").innerHTML = data;
+
         setTimeout(() => {
-          document.querySelectorAll(".toggle-sidebar").forEach((btn) => {
+          document.querySelectorAll(".toggle-sidebar").forEach(btn => {
             btn.addEventListener("click", () => {
               document.body.classList.toggle("sidebar_minimize");
             });
           });
-          document.querySelectorAll(".sidebar-link").forEach((link) => {
+
+          document.querySelectorAll(".sidebar-link").forEach(link => {
             link.addEventListener("click", () => {
               if (window.innerWidth < 992) {
                 document.body.classList.remove("sidebar_minimize");
               }
             });
           });
-          document.querySelectorAll(".nav-item").forEach((item) => {
-            item.classList.remove("active");
-          });
+
+          document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
           const path = window.location.pathname.split("/").pop();
-          document.querySelectorAll(".sidebar-link").forEach((link) => {
+
+          document.querySelectorAll(".sidebar-link").forEach(link => {
             if (link.getAttribute("href") && link.getAttribute("href").includes(path)) {
               link.parentElement.classList.add("active");
             }
@@ -143,50 +152,31 @@
       });
   }
 
-  // Cargar equipo filtrado por sucursal del encargado
-  function cargarEquipoFiltradoPorSucursal(perfil) {
+  // Cargar empleados desde vista filtrada por backend
+  function cargarEquipoDesdeAPI() {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    const contenedor = document.querySelector(".row-demo-grid");
 
-    // Obtener sucursal del encargado (asumo que es un string o id, o el primer elemento si es array)
-    let sucursalEncargado = null;
-    if (Array.isArray(perfil.sucursales) && perfil.sucursales.length > 0) {
-      sucursalEncargado = perfil.sucursales[0];
-    } else if (perfil.sucursal) {
-      sucursalEncargado = perfil.sucursal;
-    }
+    if (!token || !contenedor) return;
 
-    if (!sucursalEncargado) {
-      console.warn("El encargado no tiene sucursal asignada.");
-      return;
-    }
-
-    fetch("http://127.0.0.1:8000/api/usuarios/empleados/", {
-      headers: { Authorization: "Bearer " + token },
+    fetch("http://127.0.0.1:8000/api/usuarios/empleados-encargado/", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al cargar empleados");
+      .then(res => {
+        if (!res.ok) throw new Error("Error al obtener empleados");
         return res.json();
       })
-      .then((empleados) => {
-        // Filtrar empleados y encargados que pertenecen a la misma sucursal que el encargado
-        const equipoFiltrado = empleados.filter((emp) => {
-          let sucursalesEmp = emp.sucursales || [];
-          if (!Array.isArray(sucursalesEmp)) sucursalesEmp = [sucursalesEmp];
-          return sucursalesEmp.some(
-            (s) => s == sucursalEncargado || s === sucursalEncargado
-          );
-        });
-
-        // Actualizar el texto con el total de empleados
-        const totalSpan = document.getElementById("totalEmpleados");
-        if (totalSpan) totalSpan.textContent = equipoFiltrado.length;
-
-        const contenedor = document.querySelector(".row-demo-grid");
-        if (!contenedor) return;
+      .then(empleados => {
         contenedor.innerHTML = "";
 
-        equipoFiltrado.forEach((emp) => {
+        if (empleados.length === 0) {
+          contenedor.innerHTML = "<p class='text-muted'>No hay empleados en tu sucursal.</p>";
+          return;
+        }
+
+        empleados.forEach(emp => {
           const card = document.createElement("div");
           card.className = "col-xl-4 mb-3";
           card.innerHTML = `
@@ -206,14 +196,13 @@
           contenedor.appendChild(card);
         });
       })
-      .catch((err) => {
-        console.error("Error cargando empleados:", err);
+      .catch(err => {
+        console.error("Error al cargar empleados:", err);
+        contenedor.innerHTML = "<p class='text-danger'>Hubo un error al cargar los empleados.</p>";
       });
   }
-
-  // Ejecutar carga completa cuando DOM esté listo
-  document.addEventListener("DOMContentLoaded", cargarComponentesYEquipo);
 </script>
+
 
   </body>
 </html>

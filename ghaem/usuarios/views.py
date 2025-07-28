@@ -308,7 +308,7 @@ class DashboardGerenteStatsView(APIView):
 
     def get(self, request):
         hoy = now().date()
-        empleados_total = User.objects.filter(rol='empleado').count()
+        empleados_total = User.objects.filter(rol__in=['empleado', 'encargado']).count()
         entradas_hoy = Asistencia.objects.filter(tipo='entrada', fecha=hoy)
         salidas_hoy = Asistencia.objects.filter(tipo='salida', fecha=hoy)
         solicitudes_pendientes = SolicitudDia.objects.filter(estado='pendiente').count()
@@ -342,3 +342,19 @@ class EmpleadosDeSucursalViewSet(viewsets.ModelViewSet):
             sucursales__in=usuario.sucursales.all(),
             rol__in=["empleado", "encargado"]
         ).distinct()
+    
+#ENCARGADO EQUIPO DE SU SUCURSAL
+class EmpleadosSucursalEncargadoView(APIView):
+    permission_classes = [IsAuthenticated, IsEncargado]
+
+    def get(self, request):
+        encargado = request.user
+        sucursales = encargado.sucursales.all()
+
+        empleados = User.objects.filter(
+            sucursales__in=sucursales,
+            rol__in=['empleado', 'encargado']
+        ).exclude(id=encargado.id).distinct()
+
+        serializer = UserSerializer(empleados, many=True)
+        return Response(serializer.data)

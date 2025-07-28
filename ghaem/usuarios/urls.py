@@ -19,13 +19,14 @@ from .views import (
     SolicitudDiaGerenteView,
     AsistenciaEmpleadoView,
     DashboardGerenteStatsView,
-    AsistenciasEncargadoView
+    AsistenciasEncargadoView,
+    EmpleadosSucursalEncargadoView
 )
 
 router = DefaultRouter()
 router.register(r'sucursales', SucursalViewSet, basename='sucursal')
-router.register(r'todos', UserViewSet, basename='empleados-todos')  # <-- línea corregida
-router.register(r'empleados', EmpleadosDeSucursalViewSet, basename='empleados')
+router.register(r'todos', UserViewSet, basename='empleados-todos')
+router.register(r'empleados-sucursal', EmpleadosDeSucursalViewSet, basename='empleados-sucursal')
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -39,19 +40,16 @@ urlpatterns = [
     path('asistencia/', AsistenciaView.as_view(), name='asistencia'),
     path('asistencias-todas/', AsistenciasTodasView.as_view(), name='asistencias-todas'),
 
-    # Vista de empleados
+    # Vista de empleados - 
     path('empleados/', EmpleadosListCreateView.as_view(), name='empleados-list-create'),
     path('empleados/<int:id>/', EmpleadoDetailView.as_view(), name='empleado-detail'),
+    path('empleados-encargado/', EmpleadosSucursalEncargadoView.as_view(), name="empleados-encargado"),
     path('asistencias/mis-asistencias/', AsistenciaEmpleadoView.as_view(), name='asistencias_empleado'),
-
 
     # Solicitudes
     path('solicitudes/', SolicitudDiaEmpleadoView.as_view(), name='solicitudes-empleado'),
     path('solicitudes-gerente/', SolicitudDiaGerenteView.as_view(), name='solicitudes-gerente'),
     path('solicitudes-gerente/<int:pk>/', SolicitudDiaGerenteView.as_view(), name='solicitudes-aprobar-rechazar'),
 
-    path('asistencia/', AsistenciaView.as_view(), name='asistencia'),
-    path('asistencias-todas/', AsistenciasTodasView.as_view(), name='asistencias-todas'),
     path('asistencias/encargado/', AsistenciasEncargadoView.as_view(), name='asistencias-encargado'),
-
 ]
