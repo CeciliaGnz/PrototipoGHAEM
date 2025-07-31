@@ -358,3 +358,19 @@ class EmpleadosSucursalEncargadoView(APIView):
 
         serializer = UserSerializer(empleados, many=True)
         return Response(serializer.data)
+    
+#EQUIPO CON ENCCARGADO INCLUIDO 
+class EquipoEncargadoConEncargadoView(APIView):
+    permission_classes = [IsAuthenticated, IsEncargado]
+
+    def get(self, request):
+        encargado = request.user
+        sucursales = encargado.sucursales.all()
+
+        empleados_y_encargado = User.objects.filter(
+            sucursales__in=sucursales,
+            rol__in=['empleado', 'encargado']
+        ).distinct()
+
+        serializer = UserSerializer(empleados_y_encargado, many=True)
+        return Response(serializer.data)

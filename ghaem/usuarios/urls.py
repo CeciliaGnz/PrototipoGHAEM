@@ -20,7 +20,8 @@ from .views import (
     AsistenciaEmpleadoView,
     DashboardGerenteStatsView,
     AsistenciasEncargadoView,
-    EmpleadosSucursalEncargadoView
+    EmpleadosSucursalEncargadoView,
+    EquipoEncargadoConEncargadoView
 )
 
 router = DefaultRouter()
@@ -52,4 +53,5 @@ urlpatterns = [
     path('solicitudes-gerente/<int:pk>/', SolicitudDiaGerenteView.as_view(), name='solicitudes-aprobar-rechazar'),
 
     path('asistencias/encargado/', AsistenciasEncargadoView.as_view(), name='asistencias-encargado'),
+
 ]

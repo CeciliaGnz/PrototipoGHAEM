@@ -242,7 +242,7 @@
       async function cargarEmpleadosYSucursales() {
         const token = localStorage.getItem("token");
         const empRes = await fetch(
-          "http://127.0.0.1:8000/api/usuarios/empleados/",
+          "http://127.0.0.1:8000/api/usuarios/equipo-con-encargado/",
           { headers: { Authorization: "Bearer " + token } }
         );
         empleadosData = await empRes.json();
@@ -457,11 +457,13 @@
               continue;
             }
 
-            await fetch("http://127.0.0.1:8000/api/horarios/horarios/", {
-              method: "POST",
+            const token = localStorage.getItem('token'); // que esté actualizado
+
+            fetch('http://127.0.0.1:8000/api/horarios/horarios/', {
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + localStorage.getItem("token"),
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
               },
               body: JSON.stringify({
                 empleado: empleadoId,
